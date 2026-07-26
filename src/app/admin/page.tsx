@@ -34,9 +34,13 @@ export default function AdminPage() {
   const [totalGuests, setTotalGuests] = useState(0);
   const [tab, setTab] = useState<Tab>("pending");
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const load = useCallback(async () => {
     try {
+      setDataLoading(true);
+      setLoadError("");
       const meRes = await fetch("/api/admin/me", { credentials: "include" });
       const me = await meRes.json().catch(() => ({ admin: null }));
       if (!me?.admin) {
@@ -48,6 +52,9 @@ export default function AdminPage() {
         fetch("/api/admin/photos", { credentials: "include" }),
         fetch("/api/admin/rsvps", { credentials: "include" }),
       ]);
+      if (!photosRes.ok || !rsvpsRes.ok) {
+        setLoadError("Some data failed to load. Please refresh the page.");
+      }
       if (photosRes.ok) {
         const d = await photosRes.json().catch(() => ({ photos: [] }));
         setPhotos(d.photos ?? []);
@@ -61,6 +68,8 @@ export default function AdminPage() {
       console.error("Admin load failed:", err);
       // On unexpected failure, send back to login rather than hanging.
       setAuthed(false);
+    } finally {
+      setDataLoading(false);
     }
   }, []);
 
@@ -96,7 +105,7 @@ export default function AdminPage() {
     router.push("/");
   }
 
-  if (authed === null) {
+  if (authed === null || (authed && dataLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-sand">
         <p className="animate-pulse font-display text-2xl text-ocean-deep">Loading…</p>
@@ -135,6 +144,11 @@ export default function AdminPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
+        {loadError && (
+          <p className="mb-4 rounded-2xl bg-hibiscus/10 px-4 py-3 text-sm font-semibold text-hibiscus">
+            {loadError}
+          </p>
+        )}
         {/* Tabs */}
         <div className="flex flex-wrap gap-2">
           {(
