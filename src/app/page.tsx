@@ -192,6 +192,12 @@ export default async function Home() {
                     </li>
                   ))}
                 </ul>
+                <Link
+                  href="/recipe"
+                  className="mt-7 inline-block rounded-full border-2 border-plumeria/70 px-7 py-2.5 font-bold text-plumeria transition-colors hover:bg-plumeria hover:text-lagoon-deep"
+                >
+                  🍲 Get Nanna&apos;s Chicken Long Rice recipe — in her own voice →
+                </Link>
               </div>
               <div>
                 <p className="font-script text-3xl text-plumeria">Mele & hula</p>
