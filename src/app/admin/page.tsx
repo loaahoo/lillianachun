@@ -52,6 +52,76 @@ export default function AdminPage() {
   const [eventSaving, setEventSaving] = useState(false);
   const [eventSavedAt, setEventSavedAt] = useState<number | null>(null);
   const [eventError, setEventError] = useState("");
+  const [editingRsvpId, setEditingRsvpId] = useState<number | null>(null);
+  const [rsvpForm, setRsvpForm] = useState<{
+    name: string;
+    email: string;
+    phone: string;
+    attendees: number;
+    attending: "yes" | "no";
+    message: string;
+  } | null>(null);
+  const [rsvpSaving, setRsvpSaving] = useState(false);
+  const [rsvpError, setRsvpError] = useState("");
+
+  const startEditRsvp = (r: AdminRsvp) => {
+    setEditingRsvpId(r.id);
+    setRsvpError("");
+    setRsvpForm({
+      name: r.name,
+      email: r.email ?? "",
+      phone: r.phone ?? "",
+      attendees: r.attendees,
+      attending: r.attending,
+      message: r.message ?? "",
+    });
+  };
+
+  const cancelEditRsvp = () => {
+    setEditingRsvpId(null);
+    setRsvpForm(null);
+    setRsvpError("");
+  };
+
+  const saveRsvp = async () => {
+    if (editingRsvpId == null || !rsvpForm) return;
+    setRsvpSaving(true);
+    setRsvpError("");
+    try {
+      const res = await fetch("/api/admin/rsvps", {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: editingRsvpId,
+          name: rsvpForm.name,
+          email: rsvpForm.email || null,
+          phone: rsvpForm.phone || null,
+          attendees: rsvpForm.attendees,
+          attending: rsvpForm.attending,
+          message: rsvpForm.message || null,
+        }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setRsvpError(d.error || "Could not save changes.");
+        return;
+      }
+      const updated = d.rsvp as AdminRsvp;
+      setRsvps((prev) => {
+        const next = prev.map((r) => (r.id === updated.id ? updated : r));
+        setTotalGuests(
+          next.filter((r) => r.attending === "yes").reduce((s, r) => s + r.attendees, 0),
+        );
+        return next;
+      });
+      cancelEditRsvp();
+    } catch {
+      setRsvpError("Network error — please try again.");
+    } finally {
+      setRsvpSaving(false);
+    }
+  };
 
   const load = useCallback(async () => {
     try {
@@ -426,33 +496,127 @@ export default function AdminPage() {
                       <th className="px-4 py-3">Guests</th>
                       <th className="px-4 py-3">Note</th>
                       <th className="px-4 py-3">Received</th>
+                      <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {rsvps.map((r) => (
-                      <tr key={r.id} className="border-b border-[color:var(--sand-deep)]/60 last:border-0">
-                        <td className="px-4 py-3 font-semibold">{r.name}</td>
-                        <td className="px-4 py-3 text-ink/70">
-                          {[r.email, r.phone].filter(Boolean).join(" · ") || "—"}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span
-                            className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
-                              r.attending === "yes"
-                                ? "bg-palm/10 text-palm"
-                                : "bg-hibiscus/10 text-hibiscus"
-                            }`}
-                          >
-                            {r.attending === "yes" ? "Yes" : "No"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">{r.attending === "yes" ? r.attendees : "—"}</td>
-                        <td className="max-w-xs px-4 py-3 text-ink/70">{r.message || "—"}</td>
-                        <td className="px-4 py-3 text-ink/50">
-                          {new Date(r.createdAt).toLocaleDateString()}
-                        </td>
-                      </tr>
-                    ))}
+                    {rsvps.map((r) =>
+                      editingRsvpId === r.id && rsvpForm ? (
+                        <tr key={r.id} className="border-b border-[color:var(--sand-deep)]/60 bg-sand/40 last:border-0">
+                          <td className="px-4 py-3">
+                            <input
+                              value={rsvpForm.name}
+                              onChange={(e) => setRsvpForm({ ...rsvpForm, name: e.target.value })}
+                              className="w-32 rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                              placeholder="Name"
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col gap-1.5">
+                              <input
+                                value={rsvpForm.email}
+                                onChange={(e) => setRsvpForm({ ...rsvpForm, email: e.target.value })}
+                                className="w-40 rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                                placeholder="Email"
+                              />
+                              <input
+                                value={rsvpForm.phone}
+                                onChange={(e) => setRsvpForm({ ...rsvpForm, phone: e.target.value })}
+                                className="w-40 rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                                placeholder="Phone"
+                              />
+                            </div>
+                          </td>
+                          <td className="px-4 py-3">
+                            <select
+                              value={rsvpForm.attending}
+                              onChange={(e) =>
+                                setRsvpForm({ ...rsvpForm, attending: e.target.value as "yes" | "no" })
+                              }
+                              className="rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                            >
+                              <option value="yes">Yes</option>
+                              <option value="no">No</option>
+                            </select>
+                          </td>
+                          <td className="px-4 py-3">
+                            <input
+                              type="number"
+                              min={0}
+                              max={50}
+                              value={rsvpForm.attendees}
+                              onChange={(e) =>
+                                setRsvpForm({ ...rsvpForm, attendees: Number(e.target.value) })
+                              }
+                              className="w-16 rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                            />
+                          </td>
+                          <td className="px-4 py-3">
+                            <input
+                              value={rsvpForm.message}
+                              onChange={(e) => setRsvpForm({ ...rsvpForm, message: e.target.value })}
+                              className="w-36 rounded-lg border border-[color:var(--sand-deep)] px-2 py-1.5 text-sm"
+                              placeholder="Note"
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-ink/50">
+                            {new Date(r.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex flex-col gap-1.5">
+                              <button
+                                onClick={saveRsvp}
+                                disabled={rsvpSaving}
+                                className="rounded-full bg-palm px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-palm/85 disabled:opacity-50"
+                              >
+                                {rsvpSaving ? "Saving…" : "Save"}
+                              </button>
+                              <button
+                                onClick={cancelEditRsvp}
+                                disabled={rsvpSaving}
+                                className="rounded-full border border-ink/20 px-4 py-1.5 text-xs font-bold text-ink/70 transition-colors hover:bg-ink/5"
+                              >
+                                Cancel
+                              </button>
+                              {rsvpError && (
+                                <p className="max-w-[10rem] text-xs text-hibiscus">{rsvpError}</p>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        <tr key={r.id} className="border-b border-[color:var(--sand-deep)]/60 last:border-0">
+                          <td className="px-4 py-3 font-semibold">{r.name}</td>
+                          <td className="px-4 py-3 text-ink/70">
+                            {[r.email, r.phone].filter(Boolean).join(" · ") || "—"}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span
+                              className={`rounded-full px-2.5 py-0.5 text-xs font-bold ${
+                                r.attending === "yes"
+                                  ? "bg-palm/10 text-palm"
+                                  : "bg-hibiscus/10 text-hibiscus"
+                              }`}
+                            >
+                              {r.attending === "yes" ? "Yes" : "No"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">{r.attending === "yes" ? r.attendees : "—"}</td>
+                          <td className="max-w-xs px-4 py-3 text-ink/70">{r.message || "—"}</td>
+                          <td className="px-4 py-3 text-ink/50">
+                            {new Date(r.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-4 py-3">
+                            <button
+                              onClick={() => startEditRsvp(r)}
+                              className="rounded-full border border-ocean/40 px-4 py-1.5 text-xs font-bold text-ocean transition-colors hover:bg-ocean hover:text-white"
+                            >
+                              Edit
+                            </button>
+                          </td>
+                        </tr>
+                      ),
+                    )}
                   </tbody>
                 </table>
               </div>
