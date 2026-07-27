@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import PhotoStrip from "@/components/PhotoStrip";
 import PhotoUpload from "@/components/PhotoUpload";
-import { EVENT } from "@/lib/event";
+import { ENTERTAINMENT, EVENT, MENU } from "@/lib/event";
 
 export default function Home() {
   return (
@@ -12,122 +12,167 @@ export default function Home() {
       <Nav />
       <main className="flex-1">
         {/* Hero */}
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#0e7490] via-[#0891b2] to-[#fdf6ec] pb-20 pt-14 text-white">
-          <span aria-hidden className="animate-floaty absolute left-6 top-10 text-4xl opacity-80">🌺</span>
-          <span aria-hidden className="animate-floaty absolute right-8 top-24 text-3xl opacity-70" style={{ animationDelay: "1.2s" }}>🌴</span>
-          <span aria-hidden className="animate-floaty absolute left-1/4 bottom-24 text-3xl opacity-70" style={{ animationDelay: "2.1s" }}>🌸</span>
-          <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 md:grid-cols-2">
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#073844] via-[#0b5563] to-[#0e6a74] pb-24 pt-16 text-white">
+          {/* decorative monstera silhouettes */}
+          <svg aria-hidden viewBox="0 0 200 200" className="pointer-events-none absolute -left-16 -top-16 h-72 w-72 opacity-[0.08]" fill="currentColor">
+            <path d="M100 15c-40 0-75 32-75 78 0 40 28 72 66 77l4-30-25-8 28-6 3-22-30-10 33-3 2-20-22-12 25-1C112 22 107 15 100 15z" />
+          </svg>
+          <svg aria-hidden viewBox="0 0 200 200" className="pointer-events-none absolute -bottom-20 -right-12 h-80 w-80 rotate-45 opacity-[0.08]" fill="currentColor">
+            <path d="M100 15c-40 0-75 32-75 78 0 40 28 72 66 77l4-30-25-8 28-6 3-22-30-10 33-3 2-20-22-12 25-1C112 22 107 15 100 15z" />
+          </svg>
+          <span aria-hidden className="animate-floaty absolute left-8 top-12 text-4xl opacity-70">🌺</span>
+          <span aria-hidden className="animate-floaty absolute right-10 top-28 text-3xl opacity-60" style={{ animationDelay: "1.2s" }}>🌴</span>
+          <span aria-hidden className="animate-floaty absolute bottom-28 left-1/4 text-3xl opacity-60" style={{ animationDelay: "2.1s" }}>🌸</span>
+
+          <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
             <div className="animate-fade-slow text-center md:text-left">
-              <p className="text-lg font-semibold tracking-widest text-plumeria">E KOMO MAI · WELCOME</p>
-              <h1 className="mt-3 font-display text-5xl leading-tight sm:text-6xl">
-                {EVENT.honoree} is turning{" "}
-                <span className="text-plumeria">100!</span>
+              <p className="text-sm font-bold uppercase tracking-[0.35em] text-plumeria">
+                E komo mai · You are invited
+              </p>
+              <h1 className="mt-5 font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">
+                One Hundred Years
+                <span className="mt-2 block font-script text-4xl font-normal text-plumeria sm:text-6xl">
+                  of Aloha
+                </span>
               </h1>
-              <p className="mt-4 max-w-md text-lg text-white/90 md:max-w-none">
-                {EVENT.tagline} Join us in {EVENT.location} to honor a full
-                century of love, laughter, and island life.
+              <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-white/85 md:mx-0">
+                Join us for {EVENT.honoree}&apos;s {EVENT.theme} — honoring a
+                full century of love, laughter, and island life in{" "}
+                {EVENT.location}.
+              </p>
+              <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent md:mx-0" />
+              <p className="mt-4 font-display text-2xl text-plumeria">
+                {EVENT.date}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
                 <Link
                   href="/rsvp"
-                  className="rounded-full bg-hibiscus px-8 py-3 font-bold text-white shadow-lg transition-colors hover:bg-hibiscus/90"
+                  className="rounded-full bg-hibiscus px-9 py-3.5 font-bold text-white shadow-xl shadow-hibiscus/25 transition-all hover:-translate-y-0.5 hover:bg-[#b52f52]"
                 >
                   RSVP now
                 </Link>
                 <a
                   href="#share-a-photo"
-                  className="rounded-full border-2 border-white/70 px-8 py-3 font-bold text-white transition-colors hover:bg-white/10"
+                  className="rounded-full border border-white/50 px-9 py-3.5 font-bold text-white/95 backdrop-blur transition-colors hover:bg-white/10"
                 >
                   Share a photo
                 </a>
               </div>
             </div>
+
             <div className="animate-fade-slow mx-auto w-full max-w-sm">
-              <div className="rotate-2 rounded-3xl bg-white p-3 shadow-2xl transition-transform hover:rotate-0">
+              <div className="rotate-2 rounded-[1.75rem] border border-gold/40 bg-shell p-3 shadow-2xl transition-transform duration-300 hover:rotate-0">
                 <Image
                   src="/images/nanna.jpg"
                   alt="Nanna smiling in her yellow dress"
                   width={640}
                   height={480}
                   priority
-                  className="rounded-2xl object-cover"
+                  className="rounded-[1.25rem] object-cover"
                 />
-                <p className="py-3 text-center font-display text-2xl text-ink">
-                  Our beautiful Nanna 💛
+                <p className="py-3 text-center font-script text-3xl text-ink">
+                  Our beautiful Nanna
                 </p>
+              </div>
+            </div>
+          </div>
+
+          {/* wave divider */}
+          <svg aria-hidden viewBox="0 0 1440 70" preserveAspectRatio="none" className="absolute bottom-0 left-0 h-[46px] w-full text-sand">
+            <path fill="currentColor" d="M0,40 C240,70 480,10 720,35 C960,60 1200,20 1440,45 L1440,70 L0,70 Z" />
+          </svg>
+        </section>
+
+        {/* Party details */}
+        <section className="bg-lauhala">
+          <div className="mx-auto max-w-6xl px-4 py-20">
+            <p className="text-center font-script text-3xl text-hibiscus">The Celebration</p>
+            <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep sm:text-5xl">
+              {EVENT.theme}
+            </h2>
+            <div className="mx-auto mt-4 h-px w-28 bg-gradient-to-r from-transparent via-gold to-transparent" />
+            <div className="mt-12 grid gap-6 sm:grid-cols-3">
+              {[
+                { icon: "📅", title: "When", main: EVENT.date, sub: EVENT.time },
+                { icon: "📍", title: "Where", main: EVENT.venue, sub: `${EVENT.address} — details coming soon` },
+                { icon: "🌺", title: "Who", main: EVENT.guests, sub: "Aloha attire encouraged!" },
+              ].map(card => (
+                <div key={card.title} className="rounded-[1.5rem] border border-gold/25 bg-shell p-8 text-center shadow-[0_10px_35px_-15px_rgba(11,85,99,0.25)]">
+                  <p className="text-4xl">{card.icon}</p>
+                  <h3 className="mt-4 font-display text-2xl font-semibold text-lagoon">{card.title}</h3>
+                  <p className="mt-2 font-bold text-ink">{card.main}</p>
+                  <p className="mt-1 text-sm leading-relaxed text-ink/65">{card.sub}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link
+                href="/rsvp"
+                className="inline-block rounded-full bg-lagoon px-10 py-3.5 font-bold text-white shadow-lg shadow-lagoon/25 transition-all hover:-translate-y-0.5 hover:bg-lagoon-deep"
+              >
+                Let us know you&apos;re coming →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Menu & entertainment */}
+        <section className="bg-lagoon-deep py-20 text-white">
+          <div className="mx-auto max-w-6xl px-4">
+            <div className="grid gap-14 md:grid-cols-2">
+              <div>
+                <p className="font-script text-3xl text-plumeria">ʻOno grinds</p>
+                <h2 className="mt-1 font-display text-4xl font-semibold">The Lū&apos;au Menu</h2>
+                <ul className="mt-8 space-y-4">
+                  {MENU.map(item => (
+                    <li key={item.name} className="flex items-baseline justify-between gap-4 border-b border-white/10 pb-3">
+                      <span className="font-display text-xl font-semibold text-plumeria/95">{item.name}</span>
+                      <span className="text-right text-sm text-white/65">{item.note}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="font-script text-3xl text-plumeria">Mele & hula</p>
+                <h2 className="mt-1 font-display text-4xl font-semibold">Entertainment</h2>
+                <ul className="mt-8 space-y-6">
+                  {ENTERTAINMENT.map(item => (
+                    <li key={item.name} className="rounded-2xl border border-white/15 bg-white/5 p-5">
+                      <p className="font-display text-xl font-semibold text-plumeria/95">{item.name}</p>
+                      <p className="mt-1 text-sm text-white/70">{item.note}</p>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Party details */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-center font-display text-4xl text-ocean-deep">
-            The Celebration
-          </h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-ink/70">
-            One hundred years deserves one unforgettable lū&apos;au. Here&apos;s
-            everything you need to know.
-          </p>
-          <div className="mt-10 grid gap-6 sm:grid-cols-3">
-            <div className="rounded-3xl border border-[color:var(--sand-deep)] bg-white/80 p-6 text-center shadow-sm">
-              <p className="text-4xl">📅</p>
-              <h3 className="mt-3 font-display text-2xl text-hibiscus">When</h3>
-              <p className="mt-2 font-semibold">{EVENT.date}</p>
-              <p className="text-ink/70">{EVENT.time}</p>
-            </div>
-            <div className="rounded-3xl border border-[color:var(--sand-deep)] bg-white/80 p-6 text-center shadow-sm">
-              <p className="text-4xl">📍</p>
-              <h3 className="mt-3 font-display text-2xl text-hibiscus">Where</h3>
-              <p className="mt-2 font-semibold">{EVENT.venue}</p>
-              <p className="text-ink/70">{EVENT.address}</p>
-            </div>
-            <div className="rounded-3xl border border-[color:var(--sand-deep)] bg-white/80 p-6 text-center shadow-sm">
-              <p className="text-4xl">🌺</p>
-              <h3 className="mt-3 font-display text-2xl text-hibiscus">What</h3>
-              <p className="mt-2 font-semibold">A backyard-style lū&apos;au</p>
-              <p className="text-ink/70">
-                Ono food, live music, hula, and 100 years of stories. Aloha
-                attire encouraged!
-              </p>
-            </div>
-          </div>
-          <div className="mt-8 text-center">
-            <Link
-              href="/rsvp"
-              className="inline-block rounded-full bg-ocean px-10 py-3.5 font-bold text-white shadow-md transition-colors hover:bg-ocean-deep"
-            >
-              Let us know you&apos;re coming →
-            </Link>
-          </div>
-        </section>
-
         {/* Photo upload */}
-        <section id="share-a-photo" className="bg-sand-deep/50 py-16">
+        <section id="share-a-photo" className="bg-lauhala py-20">
           <div className="mx-auto max-w-4xl px-4">
-            <h2 className="text-center font-display text-4xl text-ocean-deep">
+            <p className="text-center font-script text-3xl text-hibiscus">Help us remember</p>
+            <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
               Share a Photo of Nanna
             </h2>
-            <p className="mx-auto mt-2 max-w-xl text-center text-ink/70">
+            <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-ink/70">
               Help us gather 100 years of memories! Upload your favorite photos
               of Nanna — after the family approves them, they&apos;ll appear in
-              the gallery below and in the big slideshow at the party.
+              the gallery and in the big slideshow at the party.
             </p>
-            <div className="mt-8">
+            <div className="mt-9">
               <PhotoUpload />
             </div>
           </div>
         </section>
 
         {/* Approved photo strip */}
-        <section className="mx-auto max-w-6xl px-4 py-16">
-          <h2 className="text-center font-display text-4xl text-ocean-deep">
+        <section className="mx-auto max-w-6xl px-4 py-20">
+          <p className="text-center font-script text-3xl text-hibiscus">The memories so far</p>
+          <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
             100 Years of Aloha
           </h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-ink/70">
-            A rolling glimpse of the memories shared so far.
-          </p>
-          <div className="mt-8">
+          <div className="mt-9">
             <PhotoStrip />
           </div>
         </section>

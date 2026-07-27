@@ -1,29 +1,36 @@
 @import "tailwindcss";
 
 :root {
-  /* Hawaiian sunset-and-sea palette */
-  --sand: #fdf6ec;
-  --sand-deep: #f5e9d7;
-  --ocean: #0e7490;
-  --ocean-deep: #155e75;
-  --palm: #166534;
-  --hibiscus: #e11d48;
-  --sunset: #f97316;
-  --plumeria: #fbbf24;
-  --ink: #3b2f2f;
+  /* Hawaiian-chic palette: deep lagoon, warm sand, hibiscus & gold */
+  --sand: #faf5ec;
+  --sand-deep: #f0e6d2;
+  --shell: #fffdf8;
+  --lagoon: #0b5563;
+  --lagoon-deep: #073844;
+  --palm: #2f6b4f;
+  --hibiscus: #c8385e;
+  --sunset: #e07a3f;
+  --gold: #c9a24b;
+  --plumeria: #f3c74f;
+  --ink: #33272a;
 }
 
 @theme inline {
   --color-sand: var(--sand);
   --color-sand-deep: var(--sand-deep);
-  --color-ocean: var(--ocean);
-  --color-ocean-deep: var(--ocean-deep);
+  --color-shell: var(--shell);
+  --color-lagoon: var(--lagoon);
+  --color-lagoon-deep: var(--lagoon-deep);
+  --color-ocean: var(--lagoon);
+  --color-ocean-deep: var(--lagoon-deep);
   --color-palm: var(--palm);
   --color-hibiscus: var(--hibiscus);
   --color-sunset: var(--sunset);
+  --color-gold: var(--gold);
   --color-plumeria: var(--plumeria);
   --color-ink: var(--ink);
-  --font-display: var(--font-display), cursive;
+  --font-display: var(--font-display), serif;
+  --font-script: var(--font-script), cursive;
   --font-body: var(--font-body), sans-serif;
 }
 
@@ -38,17 +45,43 @@ body {
 }
 
 .font-display {
-  font-family: var(--font-display), cursive;
+  font-family: var(--font-display), ui-serif, Georgia, serif;
 }
 
-/* Gentle floating animation for decorative flowers */
+.font-script {
+  font-family: var(--font-script), cursive;
+}
+
+/* Subtle woven-texture background for sand sections */
+.bg-lauhala {
+  background-image:
+    linear-gradient(rgba(201, 162, 75, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201, 162, 75, 0.05) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Gold-foil divider text treatment */
+.text-gold-sheen {
+  background: linear-gradient(100deg, #a5813a, #e5c876 40%, #c9a24b 60%, #a5813a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   @keyframes floaty {
     0%, 100% { transform: translateY(0) rotate(0deg); }
     50% { transform: translateY(-10px) rotate(4deg); }
   }
   .animate-floaty {
-    animation: floaty 5s ease-in-out infinite;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  @keyframes drift {
+    0% { transform: translateY(-8%) rotate(0deg); }
+    100% { transform: translateY(108vh) rotate(360deg); }
+  }
+  .animate-drift {
+    animation: drift linear infinite;
   }
   @keyframes marquee {
     from { transform: translateX(0); }
@@ -61,11 +94,11 @@ body {
     animation-play-state: paused;
   }
   @keyframes fadeInSlow {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   .animate-fade-slow {
-    animation: fadeInSlow 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+    animation: fadeInSlow 1s cubic-bezier(0.23, 1, 0.32, 1);
   }
 }
 

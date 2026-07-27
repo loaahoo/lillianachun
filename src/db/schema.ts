@@ -14,6 +14,11 @@ export const photoStatusEnum = pgEnum("photo_status", [
   "approved",
   "rejected",
 ]);
+export const workstreamStatusEnum = pgEnum("workstream_status", [
+  "not_started",
+  "in_progress",
+  "done",
+]);
 
 /** RSVP submissions from party guests. */
 export const rsvps = pgTable("rsvps", {
@@ -52,6 +57,34 @@ export const admins = pgTable("admins", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+/** Party-planning workstreams from the family's master event plan. */
+export const workstreams = pgTable("workstreams", {
+  id: serial("id").primaryKey(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  name: varchar("name", { length: 200 }).notNull(),
+  emoji: varchar("emoji", { length: 16 }),
+  owner: varchar("owner", { length: 200 }),
+  budget: varchar("budget", { length: 120 }),
+  deadline: varchar("deadline", { length: 120 }),
+  objective: text("objective"),
+  status: workstreamStatusEnum("status").notNull().default("not_started"),
+  isCriticalPath: integer("is_critical_path").notNull().default(0),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+/** Individual tasks within a workstream. */
+export const planTasks = pgTable("plan_tasks", {
+  id: serial("id").primaryKey(),
+  workstreamId: integer("workstream_id").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  label: text("label").notNull(),
+  done: integer("done").notNull().default(0),
+  completedBy: varchar("completed_by", { length: 200 }),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export type Rsvp = typeof rsvps.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
+export type Workstream = typeof workstreams.$inferSelect;
+export type PlanTask = typeof planTasks.$inferSelect;

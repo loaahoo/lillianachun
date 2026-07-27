@@ -1,15 +1,21 @@
 import type { Metadata } from "next";
-import { Lobster, Nunito } from "next/font/google";
+import { Cormorant_Garamond, Great_Vibes, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { EVENT } from "@/lib/event";
 
-const display = Lobster({
-  weight: "400",
+const display = Cormorant_Garamond({
+  weight: ["500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-display",
 });
 
-const body = Nunito({
+const script = Great_Vibes({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-script",
+});
+
+const body = Nunito_Sans({
   subsets: ["latin"],
   variable: "--font-body",
 });
@@ -24,7 +30,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${body.variable} min-h-screen antialiased flex flex-col`}>
+      <body className={`${display.variable} ${script.variable} ${body.variable} min-h-screen antialiased flex flex-col`}>
         {children}
       </body>
     </html>

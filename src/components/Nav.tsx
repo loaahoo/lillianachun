@@ -8,6 +8,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/rsvp", label: "RSVP" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/planning", label: "Planning" },
 ];
 
 export default function Nav() {
@@ -27,8 +28,8 @@ export default function Nav() {
   return (
     <header className="sticky top-0 z-40 border-b border-[color:var(--sand-deep)] bg-[color:var(--sand)]/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="font-display text-2xl text-ocean-deep">
-          Nanna&apos;s <span className="text-hibiscus">100th</span>
+        <Link href="/" className="font-display text-2xl font-semibold tracking-wide text-lagoon-deep">
+          Nanna&apos;s <span className="font-script text-2xl text-hibiscus">100th</span>
         </Link>
         <div className="flex items-center gap-1 sm:gap-2">
           {navLinks.map((l) => {
@@ -39,7 +40,7 @@ export default function Nav() {
                 href={l.href}
                 className={`rounded-full px-3 py-1.5 text-sm font-semibold transition-colors sm:px-4 ${
                   active
-                    ? "bg-ocean text-white"
+                    ? "bg-lagoon text-white"
                     : "text-ink hover:bg-sand-deep"
                 }`}
               >
