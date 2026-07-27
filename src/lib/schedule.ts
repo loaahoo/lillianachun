@@ -26,7 +26,8 @@ export const SIMPLE_SCHEDULE: ScheduleItem[] = [
   { time: "5:30 PM", emoji: "🍽️", title: "Dinner is Served", note: "The lū'au buffet opens — kalua pig, lomi salmon & more" },
   { time: "6:30 PM", emoji: "🎂", title: "Cake & Celebration", note: "We sing to Nanna — the big moment of the night!" },
   { time: "7:15 PM", emoji: "📸", title: "Music, Mingling & Photos", note: "Open celebration and photos with Nanna" },
-  { time: "8:45 PM", emoji: "💛", title: "Aloha 'Oe", note: "A final mahalo and warm goodnight — party ends at 9:00 PM" },
+  { time: "8:45 PM", emoji: "💛", title: "Aloha 'Oe", note: "A final mahalo and warm goodnight" },
+  { time: "9:00 PM", emoji: "🤙", title: "A hui hou", note: "It's time to go — get your honi from Nanna and drive safe 'ohana! We'd appreciate everyone helping pick up." },
 ];
 
 /** The complete run of show for the party (guest-visible portions). */
@@ -85,7 +86,8 @@ export const FULL_SCHEDULE: FullScheduleSegment[] = [
     segment: "Closing",
     emoji: "💛",
     items: [
-      { time: "8:45 PM", duration: "15 min", activity: "Final thank you & closing", note: "A short, warm aloha 'oe from the family — party ends at 9:00 PM" },
+      { time: "8:45 PM", duration: "15 min", activity: "Final thank you & closing", note: "A short, warm aloha 'oe from the family" },
+      { time: "9:00 PM", duration: "—", activity: "A hui hou — it's time to go!", note: "Get your honi from Nanna and drive safe 'ohana! We'd appreciate everyone helping pick up before you head out." },
     ],
   },
 ];
