@@ -108,7 +108,7 @@ export default function RecipePage() {
             </div>
             {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
             <audio controls preload="metadata" className="mt-5 w-full">
-              <source src="/api/recipe/audio" type="audio/mpeg" />
+              <source src="/api/recipe/audio?v=2" type="audio/mpeg" />
               Your browser does not support the audio player.
               <a href="/api/recipe/audio">Download the recording instead.</a>
             </audio>
