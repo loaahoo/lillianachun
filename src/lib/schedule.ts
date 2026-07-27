@@ -22,11 +22,11 @@ export interface FullScheduleSegment {
 export const SIMPLE_SCHEDULE: ScheduleItem[] = [
   { time: "4:00 PM", emoji: "🌺", title: "Aloha & Arrival", note: "Come say hi! Pūpūs served with soft Hawaiian music" },
   { time: "4:45 PM", emoji: "🎤", title: "Welcome & Family Tributes", note: "Opening remarks and a few words of love for Nanna" },
-  { time: "5:10 PM", emoji: "🌴", title: "Hula & Live Music", note: "Performances by the 'ohana, plus a special tribute dance" },
-  { time: "5:45 PM", emoji: "🍽️", title: "Dinner is Served", note: "The lū'au buffet opens — kalua pig, lomi salmon & more" },
+  { time: "5:00 PM", emoji: "🌴", title: "Hula & Live Music", note: "Performances by the 'ohana, plus a special tribute dance" },
+  { time: "5:30 PM", emoji: "🍽️", title: "Dinner is Served", note: "The lū'au buffet opens — kalua pig, lomi salmon & more" },
   { time: "6:30 PM", emoji: "🎂", title: "Cake & Celebration", note: "We sing to Nanna — the big moment of the night!" },
-  { time: "7:10 PM", emoji: "📸", title: "Music, Mingling & Photos", note: "Open celebration and photos with Nanna" },
-  { time: "8:15 PM", emoji: "💛", title: "Aloha 'Oe", note: "A final mahalo and warm goodnight" },
+  { time: "7:15 PM", emoji: "📸", title: "Music, Mingling & Photos", note: "Open celebration and photos with Nanna" },
+  { time: "8:45 PM", emoji: "💛", title: "Aloha 'Oe", note: "A final mahalo and warm goodnight — party ends at 9:00 PM" },
 ];
 
 /** The complete run of show for the party (guest-visible portions). */
@@ -52,16 +52,16 @@ export const FULL_SCHEDULE: FullScheduleSegment[] = [
     segment: "Entertainment — Hula & Music",
     emoji: "🌴",
     items: [
-      { time: "5:10 PM", duration: "20 min", activity: "Hula performances", note: "Danced with love by Nanna's 'ohana" },
-      { time: "5:30 PM", duration: "15 min", activity: "Special Nanna tribute dance", note: "An emotional highlight" },
+      { time: "5:00 PM", duration: "15 min", activity: "Hula performances", note: "Danced with love by Nanna's 'ohana" },
+      { time: "5:15 PM", duration: "15 min", activity: "Special Nanna tribute dance", note: "An emotional highlight" },
     ],
   },
   {
     segment: "Dinner Service",
     emoji: "🍽️",
     items: [
-      { time: "5:45 PM", duration: "45 min", activity: "Lū'au buffet opens", note: "Kalua pig, chicken long rice, lomi salmon, rice & haupia" },
-      { time: "5:45 PM", duration: "45 min", activity: "Live music continues", note: "Ray keeps the island vibes going" },
+      { time: "5:30 PM", duration: "60 min", activity: "Lū'au buffet opens", note: "Kalua pig, chicken long rice, lomi salmon, rice & haupia" },
+      { time: "5:30 PM", duration: "60 min", activity: "Live music continues", note: "Ray keeps the island vibes going" },
     ],
   },
   {
@@ -70,22 +70,22 @@ export const FULL_SCHEDULE: FullScheduleSegment[] = [
     items: [
       { time: "6:30 PM", duration: "10 min", activity: "Gather for cake", note: "Everyone comes together near the stage" },
       { time: "6:40 PM", duration: "10 min", activity: "Cake presentation & birthday song", note: "The big moment — 100 years!" },
-      { time: "6:50 PM", duration: "20 min", activity: "Cake serving", note: "A sweet slice for everyone" },
+      { time: "6:50 PM", duration: "25 min", activity: "Cake serving", note: "A sweet slice for everyone" },
     ],
   },
   {
     segment: "Open Celebration & Social Time",
     emoji: "📸",
     items: [
-      { time: "7:10 PM", duration: "60 min", activity: "Open music & mingling", note: "Dance, talk story, and enjoy" },
-      { time: "7:10 PM", duration: "60 min", activity: "Photos with Nanna", note: "Capture a memory at the photo area" },
+      { time: "7:15 PM", duration: "90 min", activity: "Open music & mingling", note: "Dance, talk story, and enjoy" },
+      { time: "7:15 PM", duration: "90 min", activity: "Photos with Nanna", note: "Capture a memory at the photo area" },
     ],
   },
   {
     segment: "Closing",
     emoji: "💛",
     items: [
-      { time: "8:15 PM", duration: "15 min", activity: "Final thank you & closing", note: "A short, warm aloha 'oe from the family" },
+      { time: "8:45 PM", duration: "15 min", activity: "Final thank you & closing", note: "A short, warm aloha 'oe from the family — party ends at 9:00 PM" },
     ],
   },
 ];

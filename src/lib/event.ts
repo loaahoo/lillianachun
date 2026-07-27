@@ -5,7 +5,7 @@ export const EVENT = {
   title: "Nanna's 100th Birthday Lū'au",
   theme: "Hawaiian Legacy Celebration",
   date: "Sunday, December 27, 2026",
-  time: "Time to be announced",
+  time: "4:00 PM – 9:00 PM",
   venue: "Venue being finalized",
   address: "Ewa Beach, Hawaii",
   location: "Ewa Beach, Hawaii",
