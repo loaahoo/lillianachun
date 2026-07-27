@@ -5,9 +5,13 @@ import Nav from "@/components/Nav";
 import PhotoStrip from "@/components/PhotoStrip";
 import PhotoUpload from "@/components/PhotoUpload";
 import { ENTERTAINMENT, EVENT, MENU } from "@/lib/event";
+import { getEventDetails } from "@/lib/eventDetails";
 import { SIMPLE_SCHEDULE } from "@/lib/schedule";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  const details = await getEventDetails();
   return (
     <div className="flex min-h-screen flex-col">
       <Nav />
@@ -39,11 +43,11 @@ export default function Home() {
               <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-white/85 md:mx-0">
                 Join us for {EVENT.honoree}&apos;s {EVENT.theme} — honoring a
                 full century of love, laughter, and island life in{" "}
-                {EVENT.location}.
+                {details.location}.
               </p>
               <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent md:mx-0" />
               <p className="mt-4 font-display text-2xl text-plumeria">
-                {EVENT.date}
+                {details.date}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-3 md:justify-start">
                 <Link
@@ -94,9 +98,9 @@ export default function Home() {
             <div className="mx-auto mt-4 h-px w-28 bg-gradient-to-r from-transparent via-gold to-transparent" />
             <div className="mt-12 grid gap-6 sm:grid-cols-3">
               {[
-                { icon: "📅", title: "When", main: EVENT.date, sub: EVENT.time },
-                { icon: "📍", title: "Where", main: EVENT.venue, sub: `${EVENT.address} — details coming soon` },
-                { icon: "🌺", title: "Who", main: EVENT.guests, sub: "Aloha attire encouraged!" },
+                { icon: "📅", title: "When", main: details.date, sub: details.time },
+                { icon: "📍", title: "Where", main: details.venue, sub: details.address },
+                { icon: "🌺", title: "Who", main: details.guests, sub: "Aloha attire encouraged!" },
               ].map(card => (
                 <div key={card.title} className="rounded-[1.5rem] border border-gold/25 bg-shell p-8 text-center shadow-[0_10px_35px_-15px_rgba(11,85,99,0.25)]">
                   <p className="text-4xl">{card.icon}</p>

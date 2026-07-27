@@ -24,7 +24,16 @@ interface AdminRsvp {
   createdAt: string;
 }
 
-type Tab = "pending" | "approved" | "rejected" | "rsvps";
+type Tab = "pending" | "approved" | "rejected" | "rsvps" | "event";
+
+interface EventDetailsForm {
+  date: string;
+  time: string;
+  venue: string;
+  address: string;
+  location: string;
+  guests: string;
+}
 
 export default function AdminPage() {
   const router = useRouter();
@@ -39,6 +48,10 @@ export default function AdminPage() {
   const [requireApproval, setRequireApproval] = useState<boolean | null>(null);
   const [toggleBusy, setToggleBusy] = useState(false);
   const [approveAllState, setApproveAllState] = useState<"idle" | "confirm" | "working">("idle");
+  const [eventForm, setEventForm] = useState<EventDetailsForm | null>(null);
+  const [eventSaving, setEventSaving] = useState(false);
+  const [eventSavedAt, setEventSavedAt] = useState<number | null>(null);
+  const [eventError, setEventError] = useState("");
 
   const load = useCallback(async () => {
     try {
@@ -51,10 +64,11 @@ export default function AdminPage() {
         return;
       }
       setAuthed(true);
-      const [photosRes, rsvpsRes, settingsRes] = await Promise.all([
+      const [photosRes, rsvpsRes, settingsRes, eventRes] = await Promise.all([
         fetch("/api/admin/photos", { credentials: "include" }),
         fetch("/api/admin/rsvps", { credentials: "include" }),
         fetch("/api/admin/settings", { credentials: "include" }),
+        fetch("/api/admin/event", { credentials: "include" }),
       ]);
       if (!photosRes.ok || !rsvpsRes.ok) {
         setLoadError("Some data failed to load. Please refresh the page.");
@@ -72,6 +86,19 @@ export default function AdminPage() {
         const d = await settingsRes.json().catch(() => ({}));
         if (typeof d.requirePhotoApproval === "boolean") {
           setRequireApproval(d.requirePhotoApproval);
+        }
+      }
+      if (eventRes.ok) {
+        const d = await eventRes.json().catch(() => null);
+        if (d && typeof d.date === "string") {
+          setEventForm({
+            date: d.date ?? "",
+            time: d.time ?? "",
+            venue: d.venue ?? "",
+            address: d.address ?? "",
+            location: d.location ?? "",
+            guests: d.guests ?? "",
+          });
         }
       }
     } catch (err) {
@@ -148,6 +175,27 @@ export default function AdminPage() {
       setPhotos(prevPhotos);
     } finally {
       setApproveAllState("idle");
+    }
+  }
+
+  async function saveEventDetails() {
+    if (!eventForm || eventSaving) return;
+    setEventSaving(true);
+    setEventError("");
+    try {
+      const res = await fetch("/api/admin/event", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventForm),
+      });
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      if (d.details) setEventForm(d.details);
+      setEventSavedAt(Date.now());
+    } catch {
+      setEventError("Could not save. Please try again.");
+    } finally {
+      setEventSaving(false);
     }
   }
 
@@ -237,6 +285,7 @@ export default function AdminPage() {
               ["approved", `Approved (${counts.approved})`],
               ["rejected", `Rejected (${counts.rejected})`],
               ["rsvps", `RSVPs (${rsvps.length})`],
+              ["event", "🎉 Event Details"],
             ] as [Tab, string][]
           ).map(([t, label]) => (
             <button
@@ -252,7 +301,7 @@ export default function AdminPage() {
         </div>
 
         {/* Photo review */}
-        {tab !== "rsvps" && (
+        {tab !== "rsvps" && tab !== "event" && (
           <div className="mt-6">
             {tab === "pending" && counts.pending > 0 && (
               <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -408,6 +457,69 @@ export default function AdminPage() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Event details editor */}
+        {tab === "event" && (
+          <div className="mt-6 max-w-2xl">
+            <div className="rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+              <h2 className="font-display text-2xl text-ocean-deep">Party Details</h2>
+              <p className="mt-1 text-sm text-ink/60">
+                These appear on the homepage, RSVP page, schedule, and footer.
+                Changes go live the moment you save.
+              </p>
+              {eventForm ? (
+                <div className="mt-6 grid gap-4">
+                  {(
+                    [
+                      ["date", "Date", "e.g. Sunday, December 27, 2026"],
+                      ["time", "Time", "e.g. 4:00 PM – 8:30 PM"],
+                      ["venue", "Venue name", "e.g. Harry & Jeanette Weinberg Memorial Hall"],
+                      ["address", "Address", "e.g. 2685 N Nimitz Hwy, Honolulu, HI 96819"],
+                      ["location", "Area / short location", "e.g. Honolulu, Hawaii"],
+                      ["guests", "Who's invited", "e.g. About 200 family & friends"],
+                    ] as [keyof EventDetailsForm, string, string][]
+                  ).map(([field, label, placeholder]) => (
+                    <div key={field}>
+                      <label
+                        htmlFor={`event-${field}`}
+                        className="mb-1 block text-sm font-bold text-ink"
+                      >
+                        {label}
+                      </label>
+                      <input
+                        id={`event-${field}`}
+                        type="text"
+                        value={eventForm[field]}
+                        onChange={(e) =>
+                          setEventForm((f) => (f ? { ...f, [field]: e.target.value } : f))
+                        }
+                        placeholder={placeholder}
+                        className="w-full rounded-xl border border-[color:var(--sand-deep)] bg-white px-4 py-2.5 outline-none ring-ocean/40 focus:ring-2"
+                      />
+                    </div>
+                  ))}
+                  <div className="mt-2 flex items-center gap-3">
+                    <button
+                      onClick={saveEventDetails}
+                      disabled={eventSaving}
+                      className="rounded-full bg-ocean px-8 py-3 font-bold text-white transition-colors hover:bg-ocean-deep disabled:opacity-60"
+                    >
+                      {eventSaving ? "Saving…" : "Save details"}
+                    </button>
+                    {eventSavedAt && !eventSaving && !eventError && (
+                      <span className="text-sm font-semibold text-palm">✓ Saved — live on the site</span>
+                    )}
+                    {eventError && (
+                      <span className="text-sm font-semibold text-hibiscus">{eventError}</span>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-6 text-ink/60">Loading current details…</p>
+              )}
+            </div>
           </div>
         )}
       </main>

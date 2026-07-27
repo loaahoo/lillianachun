@@ -3,6 +3,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import { EVENT } from "@/lib/event";
+import { getEventDetails } from "@/lib/eventDetails";
 import { FULL_SCHEDULE } from "@/lib/schedule";
 
 export const metadata: Metadata = {
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
   description: "The full evening schedule for Nanna's 100th birthday lū'au.",
 };
 
-export default function SchedulePage() {
+export const dynamic = "force-dynamic";
+
+export default async function SchedulePage() {
+  const details = await getEventDetails();
   return (
     <div className="flex min-h-screen flex-col">
       <Nav />
@@ -22,7 +26,7 @@ export default function SchedulePage() {
               Party Schedule
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-white/80">
-              {EVENT.date} · {EVENT.location}. Here&apos;s how the whole
+              {details.date} · {details.location}. Here&apos;s how the whole
               evening flows, from the first aloha to the last mahalo.
             </p>
           </div>

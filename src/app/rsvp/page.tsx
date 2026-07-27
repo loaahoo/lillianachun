@@ -3,12 +3,16 @@ import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import RsvpForm from "@/components/RsvpForm";
 import { EVENT } from "@/lib/event";
+import { getEventDetails } from "@/lib/eventDetails";
 
 export const metadata: Metadata = {
   title: `RSVP | ${EVENT.title}`,
 };
 
-export default function RsvpPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RsvpPage() {
+  const details = await getEventDetails();
   return (
     <div className="flex min-h-screen flex-col">
       <Nav />
@@ -17,8 +21,8 @@ export default function RsvpPage() {
           <h1 className="font-display text-5xl">RSVP</h1>
           <p className="mx-auto mt-3 max-w-xl px-4 text-white/90">
             Please let us know if you can join us for {EVENT.honoree}&apos;s
-            100th birthday lū&apos;au on {EVENT.date} at {EVENT.venue},{" "}
-            {EVENT.location}.
+            100th birthday lū&apos;au on {details.date} at {details.venue},{" "}
+            {details.location}.
           </p>
         </section>
         <section className="mx-auto w-full max-w-2xl px-4 py-12">
