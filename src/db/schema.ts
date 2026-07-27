@@ -57,6 +57,13 @@ export const admins = pgTable("admins", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+/** Simple key/value site settings (e.g. requirePhotoApproval). */
+export const settings = pgTable("settings", {
+  key: varchar("key", { length: 100 }).primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 /** Party-planning workstreams from the family's master event plan. */
 export const workstreams = pgTable("workstreams", {
   id: serial("id").primaryKey(),
@@ -86,5 +93,6 @@ export const planTasks = pgTable("plan_tasks", {
 export type Rsvp = typeof rsvps.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
+export type Setting = typeof settings.$inferSelect;
 export type Workstream = typeof workstreams.$inferSelect;
 export type PlanTask = typeof planTasks.$inferSelect;

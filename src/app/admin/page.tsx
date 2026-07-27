@@ -36,6 +36,8 @@ export default function AdminPage() {
   const [busyId, setBusyId] = useState<number | null>(null);
   const [dataLoading, setDataLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
+  const [requireApproval, setRequireApproval] = useState<boolean | null>(null);
+  const [toggleBusy, setToggleBusy] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -48,9 +50,10 @@ export default function AdminPage() {
         return;
       }
       setAuthed(true);
-      const [photosRes, rsvpsRes] = await Promise.all([
+      const [photosRes, rsvpsRes, settingsRes] = await Promise.all([
         fetch("/api/admin/photos", { credentials: "include" }),
         fetch("/api/admin/rsvps", { credentials: "include" }),
+        fetch("/api/admin/settings", { credentials: "include" }),
       ]);
       if (!photosRes.ok || !rsvpsRes.ok) {
         setLoadError("Some data failed to load. Please refresh the page.");
@@ -63,6 +66,12 @@ export default function AdminPage() {
         const d = await rsvpsRes.json().catch(() => ({ rsvps: [], totalGuests: 0 }));
         setRsvps(d.rsvps ?? []);
         setTotalGuests(d.totalGuests ?? 0);
+      }
+      if (settingsRes.ok) {
+        const d = await settingsRes.json().catch(() => ({}));
+        if (typeof d.requirePhotoApproval === "boolean") {
+          setRequireApproval(d.requirePhotoApproval);
+        }
       }
     } catch (err) {
       console.error("Admin load failed:", err);
@@ -97,6 +106,27 @@ export default function AdminPage() {
       setPhotos(prevPhotos);
     } finally {
       setBusyId(null);
+    }
+  }
+
+  async function toggleApproval() {
+    if (requireApproval === null || toggleBusy) return;
+    const next = !requireApproval;
+    setToggleBusy(true);
+    setRequireApproval(next); // optimistic
+    try {
+      const res = await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requirePhotoApproval: next }),
+      });
+      if (!res.ok) throw new Error();
+      const d = await res.json();
+      setRequireApproval(d.requirePhotoApproval);
+    } catch {
+      setRequireApproval(!next); // rollback
+    } finally {
+      setToggleBusy(false);
     }
   }
 
@@ -149,6 +179,35 @@ export default function AdminPage() {
             {loadError}
           </p>
         )}
+
+        {/* Photo approval requirement toggle */}
+        <div className="mb-6 flex flex-col gap-3 rounded-2xl bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="font-bold text-ink">Require approval for new photos</p>
+            <p className="text-sm text-ink/60">
+              {requireApproval === false
+                ? "OFF — new uploads go straight to the gallery without review."
+                : "ON — new uploads wait in Pending until you approve them."}
+            </p>
+          </div>
+          <button
+            role="switch"
+            aria-checked={requireApproval === true}
+            onClick={toggleApproval}
+            disabled={requireApproval === null || toggleBusy}
+            className={`relative h-8 w-14 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
+              requireApproval ? "bg-palm" : "bg-ink/25"
+            }`}
+          >
+            <span
+              className={`absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-all ${
+                requireApproval ? "left-7" : "left-1"
+              }`}
+            />
+            <span className="sr-only">Toggle photo approval requirement</span>
+          </button>
+        </div>
+
         {/* Tabs */}
         <div className="flex flex-wrap gap-2">
           {(

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { db, photos } from "@/db";
+import { getBoolSetting } from "@/lib/settings";
 
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/heic", "image/heif"];
@@ -53,6 +54,8 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const requireApproval = await getBoolSetting("requirePhotoApproval", true);
+
     const inserted = await db.insert(photos).values({
       uploaderName,
       caption,
@@ -61,10 +64,10 @@ export async function POST(req: NextRequest) {
       url: blob.url,
       blobPathname: blob.pathname,
       mimeType: file.type,
-      status: "pending",
+      status: requireApproval ? "pending" : "approved",
     }).returning({ id: photos.id });
 
-    return NextResponse.json({ ok: true, id: inserted[0]?.id });
+    return NextResponse.json({ ok: true, id: inserted[0]?.id, autoApproved: !requireApproval });
   } catch (err) {
     console.error("Photo upload error:", err);
     return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
