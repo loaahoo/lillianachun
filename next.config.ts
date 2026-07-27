@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["*.manus.computer", "*.us2.manus.computer"],
+  // Optional: allow remote dev-preview origins (comma-separated) when
+  // developing through a proxied domain. Unset in normal local dev and in
+  // production — it has no effect on the deployed site.
+  ...(process.env.DEV_PREVIEW_ORIGINS
+    ? { allowedDevOrigins: process.env.DEV_PREVIEW_ORIGINS.split(",") }
+    : {}),
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
