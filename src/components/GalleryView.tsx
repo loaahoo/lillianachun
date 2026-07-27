@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Pikake } from "@/components/TropicalDecor";
 
 interface ApprovedPhoto {
   id: number;
@@ -91,7 +92,7 @@ export default function GalleryView() {
   if (photos.length === 0) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-black px-4 text-center text-white">
-        <p className="text-5xl">🌺</p>
+        <Pikake className="h-14 w-14 text-white/80" />
         <h1 className="font-display text-3xl">No photos yet</h1>
         <p className="max-w-md text-white/70">
           Once the family approves the first photos of Nanna, they&apos;ll play

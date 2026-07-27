@@ -7,6 +7,7 @@ import PhotoUpload from "@/components/PhotoUpload";
 import { ENTERTAINMENT, EVENT, MENU } from "@/lib/event";
 import { getEventDetails } from "@/lib/eventDetails";
 import { SIMPLE_SCHEDULE } from "@/lib/schedule";
+import { LauaeBorder, LauaeFrond, Pikake, PikakeStrand } from "@/components/TropicalDecor";
 
 export const dynamic = "force-dynamic";
 
@@ -25,9 +26,14 @@ export default async function Home() {
           <svg aria-hidden viewBox="0 0 200 200" className="pointer-events-none absolute -bottom-20 -right-12 h-80 w-80 rotate-45 opacity-[0.08]" fill="currentColor">
             <path d="M100 15c-40 0-75 32-75 78 0 40 28 72 66 77l4-30-25-8 28-6 3-22-30-10 33-3 2-20-22-12 25-1C112 22 107 15 100 15z" />
           </svg>
-          <span aria-hidden className="animate-floaty absolute left-8 top-12 text-4xl opacity-70">🌺</span>
-          <span aria-hidden className="animate-floaty absolute right-10 top-28 text-3xl opacity-60" style={{ animationDelay: "1.2s" }}>🌴</span>
-          <span aria-hidden className="animate-floaty absolute bottom-28 left-1/4 text-3xl opacity-60" style={{ animationDelay: "2.1s" }}>🌸</span>
+          {/* Pikake blossoms — Nanna's favorite flower — drifting in the hero */}
+          <Pikake className="animate-floaty absolute left-8 top-12 h-10 w-10 text-white/70" />
+          <Pikake className="animate-floaty absolute right-10 top-28 h-7 w-7 text-white/50" style={{ animationDelay: "1.2s" }} />
+          <Pikake className="animate-floaty absolute bottom-32 left-1/4 h-8 w-8 text-white/55" style={{ animationDelay: "2.1s" }} />
+          <Pikake className="animate-floaty absolute right-1/4 top-1/2 h-5 w-5 text-white/40" style={{ animationDelay: "3s" }} />
+          {/* Laua'e fronds anchoring the hero corners */}
+          <LauaeFrond className="pointer-events-none absolute -bottom-4 -left-8 h-28 w-56 text-white/[0.13]" />
+          <LauaeFrond flip className="pointer-events-none absolute -bottom-2 -right-10 h-24 w-48 text-white/[0.1]" />
 
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
             <div className="animate-fade-slow text-center md:text-left">
@@ -45,7 +51,7 @@ export default async function Home() {
                 full century of love, laughter, and island life in{" "}
                 {details.location}.
               </p>
-              <div className="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-gold to-transparent md:mx-0" />
+              <PikakeStrand className="mt-4 justify-center text-plumeria md:justify-start" />
               <p className="mt-4 font-display text-2xl text-plumeria">
                 {details.date}
               </p>
@@ -90,20 +96,26 @@ export default async function Home() {
 
         {/* Party details */}
         <section className="bg-lauhala">
-          <div className="mx-auto max-w-6xl px-4 py-20">
+          <div className="relative mx-auto max-w-6xl px-4 py-20">
+            <LauaeFrond className="pointer-events-none absolute -left-6 top-8 h-20 w-40 text-palm/15" />
+            <LauaeFrond flip className="pointer-events-none absolute -right-8 bottom-8 h-20 w-40 text-palm/15" />
             <p className="text-center font-script text-3xl text-hibiscus">The Celebration</p>
             <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep sm:text-5xl">
               {EVENT.theme}
             </h2>
-            <div className="mx-auto mt-4 h-px w-28 bg-gradient-to-r from-transparent via-gold to-transparent" />
+            <PikakeStrand className="mt-4 text-lagoon" />
             <div className="mt-12 grid gap-6 sm:grid-cols-3">
               {[
                 { icon: "📅", title: "When", main: details.date, sub: details.time },
                 { icon: "📍", title: "Where", main: details.venue, sub: details.address },
-                { icon: "🌺", title: "Who", main: details.guests, sub: "Aloha attire encouraged!" },
+                { icon: "pikake", title: "Who", main: details.guests, sub: "Aloha attire encouraged!" },
               ].map(card => (
                 <div key={card.title} className="rounded-[1.5rem] border border-gold/25 bg-shell p-8 text-center shadow-[0_10px_35px_-15px_rgba(11,85,99,0.25)]">
-                  <p className="text-4xl">{card.icon}</p>
+                  {card.icon === "pikake" ? (
+                    <Pikake className="mx-auto h-10 w-10 text-lagoon" />
+                  ) : (
+                    <p className="text-4xl">{card.icon}</p>
+                  )}
                   <h3 className="mt-4 font-display text-2xl font-semibold text-lagoon">{card.title}</h3>
                   <p className="mt-2 font-bold text-ink">{card.main}</p>
                   <p className="mt-1 text-sm leading-relaxed text-ink/65">{card.sub}</p>
@@ -122,13 +134,13 @@ export default async function Home() {
         </section>
 
         {/* Evening schedule (simple, guest-friendly) */}
-        <section className="border-y border-gold/20 bg-shell py-20">
+        <section className="relative border-y border-gold/20 bg-shell pb-14 pt-20">
           <div className="mx-auto max-w-3xl px-4">
             <p className="text-center font-script text-3xl text-hibiscus">How the evening flows</p>
             <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
               The Party Schedule
             </h2>
-            <div className="mx-auto mt-4 h-px w-28 bg-gradient-to-r from-transparent via-gold to-transparent" />
+            <PikakeStrand className="mt-4 text-lagoon" />
             <ol className="relative mt-12 space-y-0 border-l-2 border-gold/30 pl-0">
               {SIMPLE_SCHEDULE.map(item => (
                 <li key={item.time} className="relative flex gap-5 pb-8 pl-8 last:pb-0">
@@ -157,11 +169,15 @@ export default async function Home() {
               </Link>
             </div>
           </div>
+          {/* laua'e greenery running along the section base, lū'au-table style */}
+          <LauaeBorder className="mt-12 text-palm/25" />
         </section>
 
         {/* Menu & entertainment */}
-        <section className="bg-lagoon-deep py-20 text-white">
-          <div className="mx-auto max-w-6xl px-4">
+        <section className="relative overflow-hidden bg-lagoon-deep py-20 text-white">
+          <LauaeFrond className="pointer-events-none absolute -left-10 -top-2 h-24 w-52 text-white/[0.08]" />
+          <LauaeFrond flip className="pointer-events-none absolute -bottom-4 -right-8 h-28 w-56 text-white/[0.08]" />
+          <div className="relative mx-auto max-w-6xl px-4">
             <div className="grid gap-14 md:grid-cols-2">
               <div>
                 <p className="font-script text-3xl text-plumeria">ʻOno grinds</p>
@@ -192,12 +208,14 @@ export default async function Home() {
         </section>
 
         {/* Photo upload */}
-        <section id="share-a-photo" className="bg-lauhala py-20">
-          <div className="mx-auto max-w-4xl px-4">
+        <section id="share-a-photo" className="relative bg-lauhala py-20">
+          <LauaeFrond className="pointer-events-none absolute -right-6 top-10 h-20 w-40 -scale-x-100 text-palm/15" />
+          <div className="relative mx-auto max-w-4xl px-4">
             <p className="text-center font-script text-3xl text-hibiscus">Help us remember</p>
             <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
               Share a Photo of Nanna
             </h2>
+            <PikakeStrand className="mt-4 text-lagoon" />
             <p className="mx-auto mt-3 max-w-xl text-center leading-relaxed text-ink/70">
               Help us gather 100 years of memories! Upload your favorite photos
               of Nanna — after the family approves them, they&apos;ll appear in
@@ -210,11 +228,13 @@ export default async function Home() {
         </section>
 
         {/* Approved photo strip */}
-        <section className="mx-auto max-w-6xl px-4 py-20">
+        <section className="relative mx-auto max-w-6xl px-4 py-20">
+          <LauaeFrond className="pointer-events-none absolute -left-4 bottom-6 h-16 w-32 text-palm/15" />
           <p className="text-center font-script text-3xl text-hibiscus">The memories so far</p>
           <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
             100 Years of Aloha
           </h2>
+          <PikakeStrand className="mt-4 text-lagoon" />
           <div className="mt-9">
             <PhotoStrip />
           </div>

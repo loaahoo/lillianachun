@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import { EVENT } from "@/lib/event";
 import { getEventDetails } from "@/lib/eventDetails";
 import { FULL_SCHEDULE } from "@/lib/schedule";
+import { LauaeFrond, PikakeStrand } from "@/components/TropicalDecor";
 
 export const metadata: Metadata = {
   title: "Party Schedule | Nanna's 100th Birthday",
@@ -19,12 +20,15 @@ export default async function SchedulePage() {
     <div className="flex min-h-screen flex-col">
       <Nav />
       <main className="flex-1 bg-lauhala">
-        <section className="bg-gradient-to-b from-[#073844] to-[#0b5563] py-14 text-white">
-          <div className="mx-auto max-w-4xl px-4 text-center">
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#073844] to-[#0b5563] py-14 text-white">
+          <LauaeFrond className="pointer-events-none absolute -bottom-3 -left-8 h-20 w-44 text-white/[0.1]" />
+          <LauaeFrond flip className="pointer-events-none absolute -bottom-3 -right-8 h-20 w-44 text-white/[0.1]" />
+          <div className="relative mx-auto max-w-4xl px-4 text-center">
             <p className="font-script text-3xl text-plumeria">The full evening</p>
             <h1 className="mt-1 font-display text-4xl font-semibold sm:text-5xl">
               Party Schedule
             </h1>
+            <PikakeStrand className="mt-3 text-plumeria" />
             <p className="mx-auto mt-4 max-w-xl text-white/80">
               {details.date} · {details.location}. Here&apos;s how the whole
               evening flows, from the first aloha to the last mahalo.

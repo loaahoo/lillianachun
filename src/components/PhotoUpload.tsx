@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { Pikake } from "@/components/TropicalDecor";
 
 const ACCEPTED = /\.(jpe?g|png|webp|gif|heic|heif)$/i;
 const MAX_SIZE = 10 * 1024 * 1024; // 10 MB, matches the API
@@ -185,7 +186,7 @@ export default function PhotoUpload() {
   if (finished && finished.failed === 0 && finished.done > 0) {
     return (
       <div className="rounded-3xl border-2 border-dashed border-palm/40 bg-white/70 p-8 text-center">
-        <p className="text-4xl">🌺</p>
+        <Pikake className="mx-auto h-10 w-10 text-palm" />
         <h3 className="mt-2 font-display text-2xl text-palm">Mahalo nui loa!</h3>
         <p className="mt-2 text-ink/80">
           {finished.done === 1
@@ -223,7 +224,11 @@ export default function PhotoUpload() {
             : "border-ocean/40 bg-sand/60 hover:border-ocean hover:bg-sand"
         }`}
       >
-        <span className="text-3xl">{dragOver ? "🌺" : "📷"}</span>
+        {dragOver ? (
+          <Pikake className="h-8 w-8 text-hibiscus" />
+        ) : (
+          <span className="text-3xl">📷</span>
+        )}
         <p className="font-semibold text-ocean-deep">
           {dragOver
             ? "Drop them right here!"
@@ -358,8 +363,8 @@ export default function PhotoUpload() {
           {busy
             ? `Sending with aloha… (${doneCount}/${queue.length})`
             : queuedCount > 1
-              ? `Share these ${queuedCount} photos 🌺`
-              : "Share this photo 🌺"}
+              ? `Share these ${queuedCount} photos`
+              : "Share this photo"}
         </button>
         {formError && <p className="text-sm font-semibold text-hibiscus">{formError}</p>}
         {finished && finished.failed > 0 && (
