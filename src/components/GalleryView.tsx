@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pikake } from "@/components/TropicalDecor";
+import { shuffle } from "@/lib/shuffle";
 
 interface ApprovedPhoto {
   id: number;
@@ -24,7 +25,7 @@ export default function GalleryView() {
   useEffect(() => {
     fetch("/api/photos/approved")
       .then((r) => r.json())
-      .then((d) => setPhotos(d.photos ?? []))
+      .then((d) => setPhotos(shuffle(d.photos ?? [])))
       .catch(() => setPhotos([]))
       .finally(() => setLoaded(true));
   }, []);

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { shuffle } from "@/lib/shuffle";
 
 interface ApprovedPhoto {
   id: number;
@@ -17,7 +18,7 @@ export default function PhotoStrip() {
   useEffect(() => {
     fetch("/api/photos/approved")
       .then((r) => r.json())
-      .then((d) => setPhotos(d.photos ?? []))
+      .then((d) => setPhotos(shuffle(d.photos ?? [])))
       .catch(() => setPhotos([]))
       .finally(() => setLoaded(true));
   }, []);
@@ -33,11 +34,17 @@ export default function PhotoStrip() {
   }
 
   const doubled = [...photos, ...photos];
+  // ~5s per photo keeps the pace slow and readable regardless of how many
+  // photos the family uploads (min 60s so tiny sets don't whip around).
+  const duration = Math.max(60, photos.length * 5);
 
   return (
     <div>
       <div className="overflow-hidden rounded-2xl">
-        <div className="animate-marquee flex w-max gap-4">
+        <div
+          className="animate-marquee flex w-max gap-4"
+          style={{ "--marquee-duration": `${duration}s` } as React.CSSProperties}
+        >
           {doubled.map((p, i) => (
             <figure key={`${p.id}-${i}`} className="w-56 shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
