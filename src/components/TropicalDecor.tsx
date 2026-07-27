@@ -4,6 +4,8 @@
  *   five-petal white blossoms with a soft center, often strung as lei.
  * - Laua'e fern — broad, glossy fronds with fingered lobes, the classic
  *   Hawaiian lū'au table/border greenery.
+ * - Maile lei — the sacred open-ended lei of twisted maile vine with
+ *   paired glossy pointed leaves, draped between sections as a border.
  */
 
 /** A single pikake blossom: five overlapping rounded petals. */
@@ -105,6 +107,111 @@ export function LauaeBorder({ className = "" }: { className?: string }) {
           style={{ opacity: 0.5 + (i % 3) * 0.12 }}
         />
       ))}
+    </div>
+  );
+}
+
+/**
+ * One repeatable segment of maile lei: a gently draping twisted vine with
+ * pairs of glossy, lance-shaped maile leaves alternating along it.
+ * viewBox 0..240 wide; the vine enters at (0,26) and exits at (240,26)
+ * so segments tile seamlessly side by side.
+ */
+function MaileSegment({ opacity = 1 }: { opacity?: number }) {
+  // leaf pairs positioned along the draped curve y = 26 + 14*sin(pi*x/240)
+  const leaves: Array<[number, number, number, boolean]> = [
+    // [x, y, angleDeg, above]
+    [18, 30, 18, false],
+    [38, 35, 24, true],
+    [60, 38.5, 12, false],
+    [84, 40, 4, true],
+    [108, 40, -4, false],
+    [132, 39, -8, true],
+    [156, 36.5, -14, false],
+    [180, 33, -20, true],
+    [202, 29.5, -24, false],
+    [222, 27, -18, true],
+  ];
+  return (
+    <g opacity={opacity}>
+      {/* twisted double vine — two intertwined strands */}
+      <path
+        d="M0 26 C40 38 80 41 120 41 C160 41 200 36 240 26"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.2"
+        strokeLinecap="round"
+      />
+      <path
+        d="M0 28 C42 36 82 44 120 43 C158 42 198 39 240 28"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        opacity="0.55"
+      />
+      {/* paired glossy lance-shaped maile leaves */}
+      {leaves.map(([x, y, a, above], i) => (
+        <g key={i} transform={`translate(${x} ${y}) rotate(${a})`}>
+          {/* leaf on one side */}
+          <path
+            d={
+              above
+                ? "M0 0 C4 -10 12 -17 22 -19 C16 -8 9 -2 0 0 Z"
+                : "M0 0 C4 10 12 17 22 19 C16 8 9 2 0 0 Z"
+            }
+            fill="currentColor"
+            opacity={0.85 - (i % 3) * 0.12}
+          />
+          {/* smaller opposing leaf for the paired look */}
+          <path
+            d={
+              above
+                ? "M2 1 C7 8 13 12 21 13 C15 5 9 2 2 1 Z"
+                : "M2 -1 C7 -8 13 -12 21 -13 C15 -5 9 -2 2 -1 Z"
+            }
+            fill="currentColor"
+            opacity={0.6 - (i % 3) * 0.1}
+          />
+        </g>
+      ))}
+    </g>
+  );
+}
+
+/**
+ * Maile lei border — a draped garland running the full width between
+ * sections. Repeats the vine segment edge-to-edge; centered pikake
+ * accent optional via `withPikake` (maile + pikake is the classic pairing).
+ */
+export function MaileLei({
+  className = "",
+  withPikake = false,
+}: {
+  className?: string;
+  withPikake?: boolean;
+}) {
+  return (
+    <div aria-hidden className={`pointer-events-none relative w-full overflow-hidden ${className}`}>
+      <svg
+        viewBox="0 0 1440 64"
+        preserveAspectRatio="xMidYMid slice"
+        className="h-10 w-full sm:h-12"
+        fill="none"
+      >
+        {Array.from({ length: 6 }).map((_, i) => (
+          <g key={i} transform={`translate(${i * 240} 0)`}>
+            <MaileSegment opacity={0.9} />
+          </g>
+        ))}
+      </svg>
+      {withPikake && (
+        <div className="absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-center gap-1.5">
+          <Pikake className="h-3.5 w-3.5 opacity-80" />
+          <Pikake className="h-5 w-5" />
+          <Pikake className="h-3.5 w-3.5 opacity-80" />
+        </div>
+      )}
     </div>
   );
 }

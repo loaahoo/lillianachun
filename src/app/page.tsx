@@ -7,7 +7,7 @@ import PhotoUpload from "@/components/PhotoUpload";
 import { ENTERTAINMENT, EVENT, MENU } from "@/lib/event";
 import { getEventDetails } from "@/lib/eventDetails";
 import { SIMPLE_SCHEDULE } from "@/lib/schedule";
-import { LauaeBorder, LauaeFrond, Pikake, PikakeStrand } from "@/components/TropicalDecor";
+import { LauaeFrond, MaileLei, Pikake, PikakeStrand } from "@/components/TropicalDecor";
 
 export const dynamic = "force-dynamic";
 
@@ -127,14 +127,16 @@ export default async function Home() {
                 href="/rsvp"
                 className="inline-block rounded-full bg-lagoon px-10 py-3.5 font-bold text-white shadow-lg shadow-lagoon/25 transition-all hover:-translate-y-0.5 hover:bg-lagoon-deep"
               >
-                Let us know you&apos;re coming →
+              Let us know you&apos;re coming →
               </Link>
             </div>
           </div>
+          {/* maile lei draped along the section boundary */}
+          <MaileLei withPikake className="text-palm/45" />
         </section>
 
         {/* Evening schedule (simple, guest-friendly) */}
-        <section className="relative border-y border-gold/20 bg-shell pb-14 pt-20">
+        <section className="relative bg-shell pb-14 pt-20">
           <div className="mx-auto max-w-3xl px-4">
             <p className="text-center font-script text-3xl text-hibiscus">How the evening flows</p>
             <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
@@ -169,8 +171,8 @@ export default async function Home() {
               </Link>
             </div>
           </div>
-          {/* laua'e greenery running along the section base, lū'au-table style */}
-          <LauaeBorder className="mt-12 text-palm/25" />
+          {/* maile lei draped along the section base */}
+          <MaileLei withPikake className="mt-12 text-palm/45" />
         </section>
 
         {/* Menu & entertainment */}
@@ -205,6 +207,8 @@ export default async function Home() {
               </div>
             </div>
           </div>
+          {/* maile lei against the deep lagoon — lighter strand */}
+          <MaileLei className="mt-14 text-plumeria/35" />
         </section>
 
         {/* Photo upload */}
@@ -225,6 +229,7 @@ export default async function Home() {
               <PhotoUpload />
             </div>
           </div>
+          <MaileLei withPikake className="mt-14 text-palm/45" />
         </section>
 
         {/* Approved photo strip */}
