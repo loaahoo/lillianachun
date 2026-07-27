@@ -27,17 +27,17 @@ export default async function Home() {
             <path d="M100 15c-40 0-75 32-75 78 0 40 28 72 66 77l4-30-25-8 28-6 3-22-30-10 33-3 2-20-22-12 25-1C112 22 107 15 100 15z" />
           </svg>
           {/* Pikake blossoms — Nanna's favorite flower — drifting in the hero */}
-          <Pikake className="animate-floaty absolute left-8 top-12 h-10 w-10 text-white/70" />
-          <Pikake className="animate-floaty absolute right-10 top-28 h-7 w-7 text-white/50" style={{ animationDelay: "1.2s" }} />
-          <Pikake className="animate-floaty absolute bottom-32 left-1/4 h-8 w-8 text-white/55" style={{ animationDelay: "2.1s" }} />
-          <Pikake className="animate-floaty absolute right-1/4 top-1/2 h-5 w-5 text-white/40" style={{ animationDelay: "3s" }} />
+          <Pikake className="animate-floaty absolute left-3 top-6 h-6 w-6 text-white/50 sm:left-8 sm:top-12 sm:h-10 sm:w-10 sm:text-white/70" />
+          <Pikake className="animate-floaty absolute right-3 top-16 h-5 w-5 text-white/40 sm:right-10 sm:top-28 sm:h-7 sm:w-7 sm:text-white/50" style={{ animationDelay: "1.2s" }} />
+          <Pikake className="animate-floaty absolute bottom-32 left-1/4 hidden h-8 w-8 text-white/55 sm:block" style={{ animationDelay: "2.1s" }} />
+          <Pikake className="animate-floaty absolute right-1/4 top-1/2 hidden h-5 w-5 text-white/40 sm:block" style={{ animationDelay: "3s" }} />
           {/* Laua'e fronds anchoring the hero corners */}
           <LauaeFrond className="pointer-events-none absolute -bottom-4 -left-8 h-28 w-56 text-white/[0.13]" />
           <LauaeFrond flip className="pointer-events-none absolute -bottom-2 -right-10 h-24 w-48 text-white/[0.1]" />
 
           <div className="mx-auto grid max-w-6xl items-center gap-12 px-4 md:grid-cols-2">
             <div className="animate-fade-slow text-center md:text-left">
-              <p className="text-sm font-bold uppercase tracking-[0.35em] text-plumeria">
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-plumeria sm:text-sm sm:tracking-[0.35em]">
                 E komo mai · You are invited
               </p>
               <h1 className="mt-5 font-display text-5xl font-semibold leading-[1.05] sm:text-7xl">

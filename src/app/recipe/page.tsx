@@ -74,8 +74,8 @@ export default function RecipePage() {
       <main className="flex-1">
         {/* Header */}
         <section className="relative overflow-hidden bg-gradient-to-b from-[#073844] via-[#0b5563] to-[#0e6a74] pb-16 pt-14 text-white">
-          <Pikake className="animate-floaty absolute left-10 top-10 h-8 w-8 text-white/60" />
-          <Pikake className="animate-floaty absolute right-12 top-24 h-6 w-6 text-white/45" style={{ animationDelay: "1.4s" }} />
+          <Pikake className="animate-floaty absolute left-3 top-6 h-5 w-5 text-white/45 sm:left-10 sm:top-10 sm:h-8 sm:w-8 sm:text-white/60" />
+          <Pikake className="animate-floaty absolute right-3 top-14 h-4 w-4 text-white/35 sm:right-12 sm:top-24 sm:h-6 sm:w-6 sm:text-white/45" style={{ animationDelay: "1.4s" }} />
           <LauaeFrond className="pointer-events-none absolute -bottom-4 -left-8 h-24 w-48 text-white/[0.12]" />
           <LauaeFrond flip className="pointer-events-none absolute -bottom-2 -right-10 h-20 w-40 text-white/[0.1]" />
           <div className="mx-auto max-w-3xl px-4 text-center">
