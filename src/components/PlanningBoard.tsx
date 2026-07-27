@@ -41,6 +41,8 @@ export default function PlanningBoard() {
   const [data, setData] = useState<Workstream[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [memberName, setMemberName] = useState("");
+  const [editingOwnerId, setEditingOwnerId] = useState<number | null>(null);
+  const [ownerDraft, setOwnerDraft] = useState("");
 
   useEffect(() => {
     setMemberName(localStorage.getItem("ohana_name") ?? "");
@@ -111,6 +113,23 @@ export default function PlanningBoard() {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "setStatus", workstreamId: w.id, status }),
+    });
+    if (!res.ok) load();
+  };
+
+  const startEditOwner = (w: Workstream) => {
+    setEditingOwnerId(w.id);
+    setOwnerDraft(w.owner && !w.owner.includes("Needs") ? w.owner : "");
+  };
+
+  const saveOwner = async (w: Workstream) => {
+    const owner = ownerDraft.trim() || "Needs a lead!";
+    setEditingOwnerId(null);
+    setData(prev => prev!.map(x => (x.id === w.id ? { ...x, owner } : x)));
+    const res = await fetch("/api/planning", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "setOwner", workstreamId: w.id, owner }),
     });
     if (!res.ok) load();
   };
@@ -192,12 +211,60 @@ export default function PlanningBoard() {
                       </span>
                     ) : null}
                   </h3>
-                  <p className="mt-1 text-sm text-ink/60">
-                    <span className={w.owner?.includes("Needs") ? "font-bold text-hibiscus" : "font-semibold"}>
-                      {w.owner || "Unassigned"}
-                    </span>
-                    {" · "}{w.budget}{" · "}{w.deadline}
-                  </p>
+                  {editingOwnerId === w.id ? (
+                    <form
+                      className="mt-1 flex flex-wrap items-center gap-2"
+                      onSubmit={e => {
+                        e.preventDefault();
+                        saveOwner(w);
+                      }}
+                    >
+                      <input
+                        autoFocus
+                        value={ownerDraft}
+                        onChange={e => setOwnerDraft(e.target.value)}
+                        placeholder="Lead's name"
+                        maxLength={200}
+                        className="rounded-full border border-gold/40 bg-white px-3 py-1 text-sm outline-none focus:border-lagoon"
+                      />
+                      <button
+                        type="submit"
+                        className="rounded-full bg-palm px-3 py-1 text-xs font-bold text-white hover:bg-palm/90"
+                      >
+                        Save
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setEditingOwnerId(null)}
+                        className="rounded-full px-2 py-1 text-xs font-semibold text-ink/60 hover:bg-sand-deep"
+                      >
+                        Cancel
+                      </button>
+                    </form>
+                  ) : (
+                    <p className="mt-1 text-sm text-ink/60">
+                      <button
+                        type="button"
+                        onClick={() => startEditOwner(w)}
+                        title="Change lead"
+                        className={`group inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 -mx-1.5 transition-colors hover:bg-sand-deep ${
+                          w.owner?.includes("Needs") ? "font-bold text-hibiscus" : "font-semibold"
+                        }`}
+                      >
+                        {w.owner || "Unassigned"}
+                        <svg
+                          aria-hidden
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="h-3.5 w-3.5 text-ink/35 transition-colors group-hover:text-lagoon"
+                        >
+                          <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-8.9 8.9a1 1 0 0 1-.45.26l-3.11.88a.5.5 0 0 1-.617-.618l.88-3.11a1 1 0 0 1 .26-.45l8.9-8.9z" />
+                        </svg>
+                        <span className="sr-only">Edit lead for {w.name}</span>
+                      </button>
+                      {" · "}{w.budget}{" · "}{w.deadline}
+                    </p>
+                  )}
                 </div>
                 <select
                   value={w.status}
