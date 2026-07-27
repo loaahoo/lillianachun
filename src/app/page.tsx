@@ -101,7 +101,11 @@ export default async function Home() {
             <LauaeFrond flip className="pointer-events-none absolute -right-8 bottom-8 h-20 w-40 text-palm/15" />
             <p className="text-center font-script text-3xl text-hibiscus">The Celebration</p>
             <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep sm:text-5xl">
-              {EVENT.theme}
+              Lilliana Chun&apos;s{" "}
+              <span className="font-body text-[1.15em] font-black tracking-tight text-gold-sheen align-baseline">
+                100
+              </span>
+              <span className="align-super text-[0.55em]">th</span> Birthday
             </h2>
             <PikakeStrand className="mt-4 text-lagoon" />
             <div className="mt-12 grid gap-6 sm:grid-cols-3">
