@@ -47,7 +47,7 @@ export default async function Home() {
                 </span>
               </h1>
               <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-white/85 md:mx-0">
-                Join us for {EVENT.honoree}&apos;s {EVENT.theme} — honoring a
+                Join us for {EVENT.theme} — honoring a
                 full century of love, laughter, and island life in{" "}
                 {details.location}.
               </p>
