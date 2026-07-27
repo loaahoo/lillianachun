@@ -38,6 +38,7 @@ export default function AdminPage() {
   const [loadError, setLoadError] = useState("");
   const [requireApproval, setRequireApproval] = useState<boolean | null>(null);
   const [toggleBusy, setToggleBusy] = useState(false);
+  const [approveAllState, setApproveAllState] = useState<"idle" | "confirm" | "working">("idle");
 
   const load = useCallback(async () => {
     try {
@@ -127,6 +128,26 @@ export default function AdminPage() {
       setRequireApproval(!next); // rollback
     } finally {
       setToggleBusy(false);
+    }
+  }
+
+  async function approveAll() {
+    if (approveAllState === "idle") {
+      setApproveAllState("confirm");
+      return;
+    }
+    if (approveAllState !== "confirm") return;
+    setApproveAllState("working");
+    const prevPhotos = photos;
+    // Optimistic: mark all pending as approved
+    setPhotos((p) => p.map((ph) => (ph.status === "pending" ? { ...ph, status: "approved" } : ph)));
+    try {
+      const res = await fetch("/api/admin/photos/approve-all", { method: "POST" });
+      if (!res.ok) throw new Error();
+    } catch {
+      setPhotos(prevPhotos);
+    } finally {
+      setApproveAllState("idle");
     }
   }
 
@@ -233,6 +254,33 @@ export default function AdminPage() {
         {/* Photo review */}
         {tab !== "rsvps" && (
           <div className="mt-6">
+            {tab === "pending" && counts.pending > 0 && (
+              <div className="mb-4 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={approveAll}
+                  disabled={approveAllState === "working"}
+                  className={`rounded-full px-6 py-2.5 text-sm font-bold text-white transition-colors disabled:opacity-60 ${
+                    approveAllState === "confirm"
+                      ? "bg-hibiscus hover:bg-hibiscus/90"
+                      : "bg-palm hover:bg-palm/90"
+                  }`}
+                >
+                  {approveAllState === "working"
+                    ? "Approving…"
+                    : approveAllState === "confirm"
+                      ? `Yes, approve all ${counts.pending} photos ✓`
+                      : `✓ Approve all ${counts.pending} pending`}
+                </button>
+                {approveAllState === "confirm" && (
+                  <button
+                    onClick={() => setApproveAllState("idle")}
+                    className="rounded-full bg-ink/10 px-5 py-2.5 text-sm font-bold text-ink transition-colors hover:bg-ink/20"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            )}
             {shown.length === 0 ? (
               <p className="rounded-2xl bg-white/70 p-10 text-center text-ink/60">
                 {tab === "pending"
