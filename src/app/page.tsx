@@ -5,6 +5,7 @@ import Nav from "@/components/Nav";
 import PhotoStrip from "@/components/PhotoStrip";
 import PhotoUpload from "@/components/PhotoUpload";
 import { ENTERTAINMENT, EVENT, MENU } from "@/lib/event";
+import { SIMPLE_SCHEDULE } from "@/lib/schedule";
 
 export default function Home() {
   return (
@@ -111,6 +112,44 @@ export default function Home() {
                 className="inline-block rounded-full bg-lagoon px-10 py-3.5 font-bold text-white shadow-lg shadow-lagoon/25 transition-all hover:-translate-y-0.5 hover:bg-lagoon-deep"
               >
                 Let us know you&apos;re coming →
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Evening schedule (simple, guest-friendly) */}
+        <section className="border-y border-gold/20 bg-shell py-20">
+          <div className="mx-auto max-w-3xl px-4">
+            <p className="text-center font-script text-3xl text-hibiscus">How the evening flows</p>
+            <h2 className="mt-1 text-center font-display text-4xl font-semibold text-lagoon-deep">
+              The Party Schedule
+            </h2>
+            <div className="mx-auto mt-4 h-px w-28 bg-gradient-to-r from-transparent via-gold to-transparent" />
+            <ol className="relative mt-12 space-y-0 border-l-2 border-gold/30 pl-0">
+              {SIMPLE_SCHEDULE.map(item => (
+                <li key={item.time} className="relative flex gap-5 pb-8 pl-8 last:pb-0">
+                  <span
+                    aria-hidden
+                    className="absolute -left-[13px] top-0.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-gold/50 bg-shell text-[11px]"
+                  >
+                    {item.emoji}
+                  </span>
+                  <div className="w-20 shrink-0 pt-0.5">
+                    <p className="font-bold text-hibiscus">{item.time}</p>
+                  </div>
+                  <div>
+                    <p className="font-display text-xl font-semibold text-lagoon-deep">{item.title}</p>
+                    <p className="mt-0.5 text-sm text-ink/60">{item.note}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+            <div className="mt-10 text-center">
+              <Link
+                href="/schedule"
+                className="inline-block rounded-full border-2 border-lagoon px-9 py-3 font-bold text-lagoon transition-colors hover:bg-lagoon hover:text-white"
+              >
+                See the full schedule →
               </Link>
             </div>
           </div>
