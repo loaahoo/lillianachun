@@ -3,7 +3,7 @@ export const EVENT = {
   honoree: "Nanna",
   age: 100,
   title: "Nanna's 100th Birthday Lū'au",
-  theme: "Lilliana Chun's 100th Birthday",
+  theme: "Lilliana Kahananui Kim Lan Soon Chun's 100th Birthday",
   date: "Sunday, December 27, 2026",
   time: "4:00 PM – 9:00 PM",
   venue: "Venue being finalized",
