@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import BudgetAdmin from "@/components/BudgetAdmin";
 
 interface AdminPhoto {
   id: number;
@@ -24,7 +25,7 @@ interface AdminRsvp {
   createdAt: string;
 }
 
-type Tab = "pending" | "approved" | "rejected" | "rsvps" | "event";
+type Tab = "pending" | "approved" | "rejected" | "rsvps" | "budget" | "event";
 
 interface EventDetailsForm {
   date: string;
@@ -288,7 +289,9 @@ export default function AdminPage() {
     approved: photos.filter((p) => p.status === "approved").length,
     rejected: photos.filter((p) => p.status === "rejected").length,
   };
-  const shown = tab === "rsvps" ? [] : photos.filter((p) => p.status === tab);
+  const shown = tab === "pending" || tab === "approved" || tab === "rejected"
+    ? photos.filter((p) => p.status === tab)
+    : [];
 
   return (
     <div className="min-h-screen bg-sand">
@@ -355,6 +358,7 @@ export default function AdminPage() {
               ["approved", `Approved (${counts.approved})`],
               ["rejected", `Rejected (${counts.rejected})`],
               ["rsvps", `RSVPs (${rsvps.length})`],
+              ["budget", "💰 Budget"],
               ["event", "🎉 Event Details"],
             ] as [Tab, string][]
           ).map(([t, label]) => (
@@ -371,7 +375,7 @@ export default function AdminPage() {
         </div>
 
         {/* Photo review */}
-        {tab !== "rsvps" && tab !== "event" && (
+        {(tab === "pending" || tab === "approved" || tab === "rejected") && (
           <div className="mt-6">
             {tab === "pending" && counts.pending > 0 && (
               <div className="mb-4 flex flex-wrap items-center gap-3">
@@ -459,6 +463,8 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {tab === "budget" && <BudgetAdmin />}
 
         {/* RSVP list */}
         {tab === "rsvps" && (

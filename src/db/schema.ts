@@ -90,9 +90,24 @@ export const planTasks = pgTable("plan_tasks", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+/** Editable party expenses shown in the Planning budget tracker. */
+export const budgetItems = pgTable("budget_items", {
+  id: serial("id").primaryKey(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  item: varchar("item", { length: 200 }).notNull(),
+  category: varchar("category", { length: 120 }).notNull(),
+  owner: varchar("owner", { length: 200 }),
+  estimatedCents: integer("estimated_cents").notNull().default(0),
+  actualCents: integer("actual_cents").notNull().default(0),
+  paymentStatus: varchar("payment_status", { length: 30 }).notNull().default("planned"),
+  notes: text("notes"),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 export type Rsvp = typeof rsvps.$inferSelect;
 export type Photo = typeof photos.$inferSelect;
 export type Admin = typeof admins.$inferSelect;
 export type Setting = typeof settings.$inferSelect;
 export type Workstream = typeof workstreams.$inferSelect;
 export type PlanTask = typeof planTasks.$inferSelect;
+export type BudgetItem = typeof budgetItems.$inferSelect;
