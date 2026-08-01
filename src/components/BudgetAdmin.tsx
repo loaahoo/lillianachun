@@ -15,7 +15,10 @@ interface BudgetItem {
   notes: string | null;
 }
 
-type BudgetDraft = Omit<BudgetItem, "id">;
+interface BudgetDraft extends Omit<BudgetItem, "id" | "estimatedCents" | "actualCents"> {
+  estimatedCents: number | "";
+  actualCents: number | "";
+}
 
 const EMPTY_DRAFT: BudgetDraft = {
   item: "",
@@ -32,6 +35,24 @@ const currency = new Intl.NumberFormat("en-US", {
   currency: "USD",
   maximumFractionDigits: 0,
 });
+
+function dollarsToCents(value: string): number | "" {
+  if (value === "") return "";
+  const dollars = Number(value);
+  return Number.isFinite(dollars) ? Math.max(0, Math.round(dollars * 100)) : "";
+}
+
+function centsToDollars(value: number | ""): number | "" {
+  return value === "" ? "" : value / 100;
+}
+
+function normalizedMoney(draft: BudgetDraft) {
+  return {
+    ...draft,
+    estimatedCents: draft.estimatedCents === "" ? 0 : draft.estimatedCents,
+    actualCents: draft.actualCents === "" ? 0 : draft.actualCents,
+  };
+}
 
 export default function BudgetAdmin() {
   const [items, setItems] = useState<BudgetItem[]>([]);
@@ -84,7 +105,7 @@ export default function BudgetAdmin() {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, ...draft }),
+        body: JSON.stringify({ id, ...normalizedMoney(draft) }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -110,7 +131,7 @@ export default function BudgetAdmin() {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newItem),
+        body: JSON.stringify(normalizedMoney(newItem)),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -181,10 +202,10 @@ export default function BudgetAdmin() {
             <option value="paid">Paid</option>
           </select>
           <label className="text-xs font-bold text-ink/60">Estimated $
-            <input type="number" min="0" step="0.01" value={newItem.estimatedCents / 100} onChange={e => setNewItem({ ...newItem, estimatedCents: Math.round(Number(e.target.value) * 100) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
+            <input type="number" min="0" step="0.01" value={centsToDollars(newItem.estimatedCents)} onChange={e => setNewItem({ ...newItem, estimatedCents: dollarsToCents(e.target.value) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
           </label>
           <label className="text-xs font-bold text-ink/60">Actual $
-            <input type="number" min="0" step="0.01" value={newItem.actualCents / 100} onChange={e => setNewItem({ ...newItem, actualCents: Math.round(Number(e.target.value) * 100) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
+            <input type="number" min="0" step="0.01" value={centsToDollars(newItem.actualCents)} onChange={e => setNewItem({ ...newItem, actualCents: dollarsToCents(e.target.value) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
           </label>
           <input value={newItem.notes ?? ""} onChange={e => setNewItem({ ...newItem, notes: e.target.value })} placeholder="Notes (optional)" className="rounded-xl border border-sand-deep px-3 py-2 lg:col-span-2" />
         </div>
@@ -218,10 +239,10 @@ export default function BudgetAdmin() {
                   </select>
                 </label>
                 <label className="text-xs font-bold text-ink/60">Estimated $
-                  <input type="number" min="0" step="0.01" value={draft.estimatedCents / 100} onChange={e => updateDraft(item.id, { estimatedCents: Math.round(Number(e.target.value) * 100) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
+                  <input type="number" min="0" step="0.01" value={centsToDollars(draft.estimatedCents)} onChange={e => updateDraft(item.id, { estimatedCents: dollarsToCents(e.target.value) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
                 </label>
                 <label className="text-xs font-bold text-ink/60">Actual $
-                  <input type="number" min="0" step="0.01" value={draft.actualCents / 100} onChange={e => updateDraft(item.id, { actualCents: Math.round(Number(e.target.value) * 100) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
+                  <input type="number" min="0" step="0.01" value={centsToDollars(draft.actualCents)} onChange={e => updateDraft(item.id, { actualCents: dollarsToCents(e.target.value) })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
                 </label>
                 <label className="text-xs font-bold text-ink/60 md:col-span-2">Notes
                   <input value={draft.notes ?? ""} onChange={e => updateDraft(item.id, { notes: e.target.value })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
