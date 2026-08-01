@@ -23,7 +23,7 @@ export const SIMPLE_SCHEDULE: ScheduleItem[] = [
   { time: "11:00 AM", emoji: "🌺", title: "Arrival", note: "Reception opens with Hawaiian music and the family photo station" },
   { time: "11:45 AM", emoji: "🎤", title: "Welcome Remarks", note: "The family welcomes everyone to Nanna's celebration" },
   { time: "12:00 PM", emoji: "🍽️", title: "Food", note: "Lunch is served" },
-  { time: "1:00 PM", emoji: "🌴", title: "Hula", note: "A special hula performance for Nanna" },
+  { time: "1:00 PM", emoji: "🌴", title: "Hula and Polynesian Dances", note: "Special hula and Polynesian dance performances for Nanna" },
   { time: "2:00–3:00 PM", emoji: "🎵", title: "Live Music", note: "Enjoy live music during the final hour" },
   { time: "2:00–2:30 PM", emoji: "📸", title: "Photos with Nanna", note: "Take family photos with Nanna" },
   { time: "3:00 PM", emoji: "💛", title: "Wrap-Up", note: "Closing mahalo and a hui hou" },
@@ -54,10 +54,10 @@ export const FULL_SCHEDULE: FullScheduleSegment[] = [
     ],
   },
   {
-    segment: "Hula",
+    segment: "Hula and Polynesian Dances",
     emoji: "🌴",
     items: [
-      { time: "1:00 PM", duration: "60 min", activity: "Hula performance", note: "A special performance for Nanna" },
+      { time: "1:00 PM", duration: "60 min", activity: "Hula and Polynesian dance performances", note: "Special performances for Nanna" },
     ],
   },
   {
