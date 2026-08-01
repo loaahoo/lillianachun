@@ -30,11 +30,11 @@ const STATUS_META: Record<Workstream["status"], { label: string; cls: string }> 
 };
 
 const CRITICAL_PATH = [
-  "Venue confirmed",
-  "Total budget defined",
-  "Decor lead assigned",
-  "Food plan locked",
-  "MC assigned",
+  { label: "Venue and facility confirmed", done: true },
+  { label: "250-guest plan established", done: true },
+  { label: "Finalize 36-table room layout", done: false },
+  { label: "Assign primary and backup MC", done: false },
+  { label: "Complete final run of show", done: false },
 ];
 
 export default function PlanningBoard() {
@@ -179,11 +179,18 @@ export default function PlanningBoard() {
         </h2>
         <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
           {CRITICAL_PATH.map((item, i) => (
-            <li key={item} className="rounded-xl bg-white/80 px-4 py-3 text-sm font-bold text-ink/80 shadow-sm">
-              <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-hibiscus text-xs text-white">
-                {i + 1}
+            <li
+              key={item.label}
+              className={`rounded-xl px-4 py-3 text-sm font-bold shadow-sm ${
+                item.done ? "bg-palm/10 text-palm" : "bg-white/80 text-ink/80"
+              }`}
+            >
+              <span className={`mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full text-xs text-white ${
+                item.done ? "bg-palm" : "bg-hibiscus"
+              }`}>
+                {item.done ? "✓" : i + 1}
               </span>
-              {item}
+              {item.label}
             </li>
           ))}
         </ol>

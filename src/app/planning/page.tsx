@@ -27,6 +27,29 @@ export default function PlanningPage() {
           </div>
         </section>
         <section className="mx-auto w-full max-w-6xl px-4 py-12">
+          <div className="mb-10 rounded-[1.5rem] border border-gold/25 bg-shell p-6 shadow-sm sm:p-8">
+            <div className="flex flex-col gap-2 text-center sm:text-left">
+              <p className="font-script text-3xl text-hibiscus">Hawaiian Legacy Celebration</p>
+              <h2 className="font-display text-3xl font-semibold text-lagoon-deep">Event Overview</h2>
+            </div>
+            <dl className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {[
+                ["Date", "Saturday, December 26, 2026"],
+                ["Celebration", "11:00 AM–3:00 PM"],
+                ["Venue access", "8:00 AM–10:00 PM"],
+                ["Setup", "9:00–11:00 AM"],
+                ["Cleanup", "3:00–4:30 PM"],
+                ["Venue", "Makakilo Stake Center"],
+                ["Address", "92-900 Makakilo Drive, Kapolei, HI 96707"],
+                ["Expected guests", "Approximately 250"],
+              ].map(([label, value]) => (
+                <div key={label} className="rounded-xl bg-sand-deep/35 px-4 py-3">
+                  <dt className="text-xs font-bold uppercase tracking-wider text-ink/50">{label}</dt>
+                  <dd className="mt-1 font-semibold text-ink/85">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
           <PlanningBoard />
           <BudgetTracker />
         </section>
