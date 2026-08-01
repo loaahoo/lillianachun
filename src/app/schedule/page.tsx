@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
-import { EVENT } from "@/lib/event";
 import { getEventDetails } from "@/lib/eventDetails";
 import { FULL_SCHEDULE } from "@/lib/schedule";
 import { LauaeFrond, PikakeStrand } from "@/components/TropicalDecor";
 
 export const metadata: Metadata = {
   title: "Party Schedule | Nanna's 100th Birthday",
-  description: "The full evening schedule for Nanna's 100th birthday lū'au.",
+  description: "The full celebration schedule for Nanna's 100th birthday.",
 };
 
 export const dynamic = "force-dynamic";
@@ -24,14 +23,14 @@ export default async function SchedulePage() {
           <LauaeFrond className="pointer-events-none absolute -bottom-3 -left-8 h-20 w-44 text-white/[0.1]" />
           <LauaeFrond flip className="pointer-events-none absolute -bottom-3 -right-8 h-20 w-44 text-white/[0.1]" />
           <div className="relative mx-auto max-w-4xl px-4 text-center">
-            <p className="font-script text-3xl text-plumeria">The full evening</p>
+            <p className="font-script text-3xl text-plumeria">A joyful afternoon of aloha</p>
             <h1 className="mt-1 font-display text-4xl font-semibold sm:text-5xl">
               Party Schedule
             </h1>
             <PikakeStrand className="mt-3 text-plumeria" />
             <p className="mx-auto mt-4 max-w-xl text-white/80">
-              {details.date} · {details.location}. Here&apos;s how the whole
-              evening flows, from the first aloha to the last mahalo.
+              {details.date} · 11:00 AM–3:00 PM · {details.location}. Here&apos;s how the
+              celebration flows, from the first aloha to the last mahalo.
             </p>
           </div>
         </section>

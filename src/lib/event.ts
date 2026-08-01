@@ -4,12 +4,12 @@ export const EVENT = {
   age: 100,
   title: "Nanna's 100th Birthday Lū'au",
   theme: "Lilliana Kahananui Kim Lan Soon Chun's 100th Birthday",
-  date: "Sunday, December 27, 2026",
-  time: "4:00 PM – 9:00 PM",
-  venue: "Venue being finalized",
-  address: "Ewa Beach, Hawaii",
-  location: "Ewa Beach, Hawaii",
-  guests: "About 200 family & friends",
+  date: "Saturday, December 26, 2026",
+  time: "11:00 AM – 3:00 PM",
+  venue: "Makakilo Stake Center",
+  address: "92-900 Makakilo Drive, Kapolei, HI 96707",
+  location: "Kapolei, Hawaii",
+  guests: "Approximately 250 family & friends",
   tagline: "A century of aloha. One unforgettable celebration.",
 } as const;
 

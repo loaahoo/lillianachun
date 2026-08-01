@@ -644,7 +644,7 @@ export default function AdminPage() {
                   {(
                     [
                       ["date", "Date", "e.g. Sunday, December 27, 2026"],
-                      ["time", "Time", "e.g. 4:00 PM – 8:30 PM"],
+                      ["time", "Time", "e.g. 11:00 AM – 3:00 PM"],
                       ["venue", "Venue name", "e.g. Harry & Jeanette Weinberg Memorial Hall"],
                       ["address", "Address", "e.g. 2685 N Nimitz Hwy, Honolulu, HI 96819"],
                       ["location", "Area / short location", "e.g. Honolulu, Hawaii"],

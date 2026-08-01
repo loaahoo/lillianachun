@@ -20,14 +20,13 @@ export interface FullScheduleSegment {
 
 /** The simple, friendly version guests see on the homepage. */
 export const SIMPLE_SCHEDULE: ScheduleItem[] = [
-  { time: "4:00 PM", emoji: "🌺", title: "Aloha & Arrival", note: "Come say hi! Pūpūs served with soft Hawaiian music" },
-  { time: "4:45 PM", emoji: "🎤", title: "Welcome & Family Tributes", note: "Opening remarks and a few words of love for Nanna" },
-  { time: "5:00 PM", emoji: "🌴", title: "Hula & Live Music", note: "Performances by the 'ohana, plus a special tribute dance" },
-  { time: "5:30 PM", emoji: "🍽️", title: "Dinner is Served", note: "The lū'au buffet opens — kalua pig, lomi salmon & more" },
-  { time: "6:30 PM", emoji: "🎂", title: "Cake & Celebration", note: "We sing to Nanna — the big moment of the night!" },
-  { time: "7:15 PM", emoji: "📸", title: "Music, Mingling & Photos", note: "Open celebration and photos with Nanna" },
-  { time: "8:45 PM", emoji: "💛", title: "Aloha 'Oe", note: "A final mahalo and warm goodnight" },
-  { time: "9:00 PM", emoji: "🤙", title: "A hui hou", note: "It's time to go — get your honi from Nanna and drive safe 'ohana! We'd appreciate everyone helping pick up." },
+  { time: "11:00 AM", emoji: "🌺", title: "Arrival", note: "Reception opens with Hawaiian music and the family photo station" },
+  { time: "11:45 AM", emoji: "🎤", title: "Welcome Remarks", note: "The family welcomes everyone to Nanna's celebration" },
+  { time: "12:00 PM", emoji: "🍽️", title: "Food", note: "Lunch is served" },
+  { time: "1:00 PM", emoji: "🌴", title: "Hula", note: "A special hula performance for Nanna" },
+  { time: "2:00–3:00 PM", emoji: "🎵", title: "Live Music", note: "Enjoy live music during the final hour" },
+  { time: "2:00–2:30 PM", emoji: "📸", title: "Photos with Nanna", note: "Take family photos with Nanna" },
+  { time: "3:00 PM", emoji: "💛", title: "Wrap-Up", note: "Closing mahalo and a hui hou" },
 ];
 
 /** The complete run of show for the party (guest-visible portions). */
@@ -36,58 +35,44 @@ export const FULL_SCHEDULE: FullScheduleSegment[] = [
     segment: "Guest Arrival & Welcome",
     emoji: "🌺",
     items: [
-      { time: "4:00 PM", duration: "45 min", activity: "Guests arrive", note: "Reception team welcomes you at the entrance — light music playing" },
-      { time: "4:00 PM", duration: "45 min", activity: "Pūpūs served", note: "Appetizers by the Maui Chun 'ohana" },
-      { time: "4:00 PM", duration: "45 min", activity: "Background music", note: "Soft Hawaiian music by Ray" },
+      { time: "11:00 AM", duration: "45 min", activity: "Guests arrive", note: "Reception team welcomes everyone and directs gifts, cards and seating" },
+      { time: "11:00 AM", duration: "45 min", activity: "Hawaiian background music", note: "Settle in, greet family and talk story" },
     ],
   },
   {
-    segment: "Program Start",
+    segment: "Welcome Remarks",
     emoji: "🎤",
     items: [
-      { time: "4:45 PM", duration: "10 min", activity: "Welcome & opening remarks", note: "Our MC kicks off the celebration" },
-      { time: "4:55 PM", duration: "15 min", activity: "Family tributes", note: "A few words from the family" },
+      { time: "11:45 AM", duration: "15 min", activity: "Welcome remarks", note: "The family welcomes the 'ohana and begins the celebration" },
     ],
   },
   {
-    segment: "Entertainment — Hula & Music",
-    emoji: "🌴",
-    items: [
-      { time: "5:00 PM", duration: "15 min", activity: "Hula performances", note: "Danced with love by Nanna's 'ohana" },
-      { time: "5:15 PM", duration: "15 min", activity: "Special Nanna tribute dance", note: "An emotional highlight" },
-    ],
-  },
-  {
-    segment: "Dinner Service",
+    segment: "Food",
     emoji: "🍽️",
     items: [
-      { time: "5:30 PM", duration: "60 min", activity: "Lū'au buffet opens", note: "Kalua pig, chicken long rice, lomi salmon, rice & haupia" },
-      { time: "5:30 PM", duration: "60 min", activity: "Live music continues", note: "Ray keeps the island vibes going" },
+      { time: "12:00 PM", duration: "60 min", activity: "Lunch is served", note: "Relax, eat and enjoy time with the 'ohana" },
     ],
   },
   {
-    segment: "The Main Moment — Cake & Celebration",
-    emoji: "🎂",
+    segment: "Hula",
+    emoji: "🌴",
     items: [
-      { time: "6:30 PM", duration: "10 min", activity: "Gather for cake", note: "Everyone comes together near the stage" },
-      { time: "6:40 PM", duration: "10 min", activity: "Cake presentation & birthday song", note: "The big moment — 100 years!" },
-      { time: "6:50 PM", duration: "25 min", activity: "Cake serving", note: "A sweet slice for everyone" },
+      { time: "1:00 PM", duration: "60 min", activity: "Hula performance", note: "A special performance for Nanna" },
     ],
   },
   {
-    segment: "Open Celebration & Social Time",
+    segment: "Live Music & Photos",
     emoji: "📸",
     items: [
-      { time: "7:15 PM", duration: "90 min", activity: "Open music & mingling", note: "Dance, talk story, and enjoy" },
-      { time: "7:15 PM", duration: "90 min", activity: "Photos with Nanna", note: "Capture a memory at the photo area" },
+      { time: "2:00 PM", duration: "60 min", activity: "Live music", note: "Enjoy live music during the final hour" },
+      { time: "2:00 PM", duration: "30 min", activity: "Photos with Nanna", note: "Capture family photos with Nanna" },
     ],
   },
   {
-    segment: "Closing",
+    segment: "Wrap-Up",
     emoji: "💛",
     items: [
-      { time: "8:45 PM", duration: "15 min", activity: "Final thank you & closing", note: "A short, warm aloha 'oe from the family" },
-      { time: "9:00 PM", duration: "—", activity: "A hui hou — it's time to go!", note: "Get your honi from Nanna and drive safe 'ohana! We'd appreciate everyone helping pick up before you head out." },
+      { time: "3:00 PM", duration: "—", activity: "Final mahalo & closing", note: "A short, warm aloha 'oe from the family" },
     ],
   },
 ];
