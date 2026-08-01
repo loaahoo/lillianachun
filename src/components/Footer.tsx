@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { EVENT } from "@/lib/event";
 import { getEventDetails } from "@/lib/eventDetails";
 import { PikakeStrand } from "@/components/TropicalDecor";
@@ -11,6 +12,12 @@ export default async function Footer() {
       <p className="mt-1">
         {EVENT.title} · {details.date} · {details.location}
       </p>
+      <Link
+        href="/admin"
+        className="mt-4 inline-block text-xs font-semibold text-ink/50 underline decoration-ink/25 underline-offset-4 transition-colors hover:text-lagoon-deep"
+      >
+        Admin
+      </Link>
     </footer>
   );
 }
