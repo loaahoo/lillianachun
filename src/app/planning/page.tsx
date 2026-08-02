@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
 import BudgetTracker from "@/components/BudgetTracker";
+import ContributionTracker from "@/components/ContributionTracker";
 import PlanningBoard from "@/components/PlanningBoard";
 
 export const metadata: Metadata = {
@@ -52,6 +53,7 @@ export default function PlanningPage() {
           </div>
           <PlanningBoard />
           <BudgetTracker />
+          <ContributionTracker />
         </section>
       </main>
       <Footer />

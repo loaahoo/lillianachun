@@ -1,0 +1,62 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import type { Contribution } from "@/lib/contributions";
+
+const currency = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  maximumFractionDigits: 0,
+});
+
+export default function ContributionTracker() {
+  const [items, setItems] = useState<Contribution[] | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    void fetch("/api/contributions", { signal: controller.signal })
+      .then(res => res.ok ? res.json() : Promise.reject())
+      .then(data => setItems(data.contributions ?? []))
+      .catch(() => {
+        if (!controller.signal.aborted) setItems([]);
+      });
+    return () => controller.abort();
+  }, []);
+
+  const total = useMemo(
+    () => items?.reduce((sum, item) => sum + item.amountCents, 0) ?? 0,
+    [items],
+  );
+
+  if (!items) return <p className="mt-8 text-center text-ink/55">Loading family contributions…</p>;
+
+  return (
+    <section className="mt-10" aria-labelledby="contributions-heading">
+      <div className="text-center">
+        <p className="font-script text-3xl text-hibiscus">Mahalo to our family</p>
+        <h3 id="contributions-heading" className="mt-1 font-display text-3xl font-semibold text-lagoon-deep">
+          Family Contributions
+        </h3>
+        <p className="mx-auto mt-2 max-w-2xl text-ink/65">
+          Amounts each family member has pledged toward Nanna&apos;s celebration.
+        </p>
+      </div>
+      <div className="mt-6 overflow-hidden rounded-[1.5rem] border border-gold/25 bg-shell shadow-sm">
+        <div className="grid gap-px bg-gold/20 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map(item => (
+            <div key={item.name} className="flex items-center justify-between bg-shell px-5 py-4">
+              <span className="font-semibold text-ink/80">{item.name}</span>
+              <span className="font-display text-xl font-semibold text-ocean-deep">
+                {currency.format(item.amountCents / 100)}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div className="flex items-center justify-between bg-lagoon-deep px-6 py-5 text-white">
+          <span className="font-bold uppercase tracking-wider">Total pledged</span>
+          <span className="font-display text-3xl font-semibold">{currency.format(total / 100)}</span>
+        </div>
+      </div>
+    </section>
+  );
+}

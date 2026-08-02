@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import BudgetAdmin from "@/components/BudgetAdmin";
+import ContributionAdmin from "@/components/ContributionAdmin";
 
 interface AdminPhoto {
   id: number;
@@ -464,7 +465,12 @@ export default function AdminPage() {
           </div>
         )}
 
-        {tab === "budget" && <BudgetAdmin />}
+        {tab === "budget" && (
+          <>
+            <BudgetAdmin />
+            <ContributionAdmin />
+          </>
+        )}
 
         {/* RSVP list */}
         {tab === "rsvps" && (
