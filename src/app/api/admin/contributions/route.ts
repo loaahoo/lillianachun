@@ -28,6 +28,7 @@ export async function PATCH(req: NextRequest) {
       .map((item: Contribution) => ({
         name: String(item.name ?? "").trim().slice(0, 200),
         amountCents: Math.max(0, Math.round(Number(item.amountCents) || 0)),
+        received: item.received === true,
       }))
       .filter((item: Contribution) => item.name);
     await setSetting(CONTRIBUTIONS_KEY, JSON.stringify(contributions));

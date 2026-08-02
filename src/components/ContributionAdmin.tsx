@@ -51,7 +51,7 @@ export default function ContributionAdmin() {
       <p className="mt-1 text-sm text-ink/60">Edit the amounts pledged on the public Planning page.</p>
       <div className="mt-4 space-y-3">
         {items.map((item, index) => (
-          <div key={index} className="grid gap-3 sm:grid-cols-[1fr_12rem_auto]">
+          <div key={index} className="grid gap-3 sm:grid-cols-[1fr_12rem_auto_auto]">
             <input
               aria-label="Contributor name"
               value={item.name}
@@ -68,6 +68,15 @@ export default function ContributionAdmin() {
                 className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink"
               />
             </label>
+            <label className="flex items-center gap-2 self-end rounded-xl border border-sand-deep px-3 py-2 text-sm font-semibold text-ink/70">
+              <input
+                type="checkbox"
+                checked={item.received}
+                onChange={e => setItems(current => current.map((value, i) => i === index ? { ...value, received: e.target.checked } : value))}
+                className="h-4 w-4 accent-palm"
+              />
+              Money received
+            </label>
             <button
               type="button"
               onClick={() => setItems(current => current.filter((_, i) => i !== index))}
@@ -79,7 +88,7 @@ export default function ContributionAdmin() {
         ))}
       </div>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <button type="button" onClick={() => setItems(current => [...current, { name: "", amountCents: 0 }])} className="rounded-full bg-ocean px-5 py-2 text-sm font-bold text-white">
+        <button type="button" onClick={() => setItems(current => [...current, { name: "", amountCents: 0, received: false }])} className="rounded-full bg-ocean px-5 py-2 text-sm font-bold text-white">
           + Add person
         </button>
         <button type="button" onClick={save} disabled={saving} className="rounded-full bg-palm px-5 py-2 text-sm font-bold text-white disabled:opacity-50">
