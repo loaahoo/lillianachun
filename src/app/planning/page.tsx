@@ -51,9 +51,9 @@ export default function PlanningPage() {
               ))}
             </dl>
           </div>
-          <PlanningBoard />
           <BudgetTracker />
           <ContributionTracker />
+          <PlanningBoard />
         </section>
       </main>
       <Footer />
