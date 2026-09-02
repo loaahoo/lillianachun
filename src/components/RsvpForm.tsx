@@ -7,7 +7,7 @@ export default function RsvpForm() {
     name: "",
     email: "",
     phone: "",
-    attendees: 1,
+    attendees: "1",
     attending: "yes",
     message: "",
   });
@@ -26,7 +26,10 @@ export default function RsvpForm() {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          attendees: form.attending === "yes" ? Number(form.attendees) : 1,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -44,7 +47,7 @@ export default function RsvpForm() {
         <h2 className="mt-3 font-display text-3xl text-palm">Mahalo, {form.name.split(" ")[0]}!</h2>
         <p className="mt-2 text-ink/80">
           {form.attending === "yes"
-            ? `We can't wait to celebrate with you and your ${form.attendees > 1 ? `party of ${form.attendees}` : "good self"}. See you in Ewa Beach!`
+            ? `We can't wait to celebrate with you and your ${Number(form.attendees) > 1 ? `party of ${form.attendees}` : "good self"}. See you in Ewa Beach!`
             : "We're sorry you'll miss it — thank you for letting us know. Nanna sends her aloha!"}
         </p>
       </div>
@@ -133,8 +136,9 @@ export default function RsvpForm() {
               type="number"
               min={1}
               max={20}
+              required={form.attending === "yes"}
               value={form.attendees}
-              onChange={(e) => set("attendees", parseInt(e.target.value, 10) || 1)}
+              onChange={(e) => set("attendees", e.target.value)}
               disabled={form.attending === "no"}
               className="w-full rounded-xl border border-[color:var(--sand-deep)] bg-white px-4 py-2.5 outline-none ring-ocean/40 focus:ring-2 disabled:opacity-50"
             />
