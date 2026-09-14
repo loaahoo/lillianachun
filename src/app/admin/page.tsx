@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import BudgetAdmin from "@/components/BudgetAdmin";
 import ContributionAdmin from "@/components/ContributionAdmin";
+import MusicAdmin from "@/components/MusicAdmin";
 
 interface AdminPhoto {
   id: number;
@@ -26,7 +27,7 @@ interface AdminRsvp {
   createdAt: string;
 }
 
-type Tab = "pending" | "approved" | "rejected" | "rsvps" | "budget" | "event";
+type Tab = "pending" | "approved" | "rejected" | "rsvps" | "budget" | "music" | "event";
 
 interface EventDetailsForm {
   date: string;
@@ -360,6 +361,7 @@ export default function AdminPage() {
               ["rejected", `Rejected (${counts.rejected})`],
               ["rsvps", `RSVPs (${rsvps.length})`],
               ["budget", "💰 Budget"],
+              ["music", "🎵 Gallery Music"],
               ["event", "🎉 Event Details"],
             ] as [Tab, string][]
           ).map(([t, label]) => (
@@ -471,6 +473,8 @@ export default function AdminPage() {
             <ContributionAdmin />
           </>
         )}
+
+        {tab === "music" && <MusicAdmin />}
 
         {/* RSVP list */}
         {tab === "rsvps" && (

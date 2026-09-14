@@ -1,12 +1,17 @@
 import { eq } from "drizzle-orm";
 import { db, settings } from "@/db";
 
+/** Read a raw string setting, returning null when it has not been set. */
+export async function getSetting(key: string): Promise<string | null> {
+  const rows = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+  return rows[0]?.value ?? null;
+}
+
 /** Read a boolean setting, defaulting to `fallback` when unset. */
 export async function getBoolSetting(key: string, fallback: boolean): Promise<boolean> {
   try {
-    const rows = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
-    if (rows.length === 0) return fallback;
-    return rows[0].value === "true";
+    const value = await getSetting(key);
+    return value === null ? fallback : value === "true";
   } catch {
     return fallback;
   }

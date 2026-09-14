@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pikake } from "@/components/TropicalDecor";
+import GalleryMusicPlayer from "@/components/GalleryMusicPlayer";
 import { shuffle } from "@/lib/shuffle";
 
 interface ApprovedPhoto {
@@ -161,6 +162,7 @@ export default function GalleryView() {
           Nanna&apos;s 100 Years of Aloha
         </h1>
         <div className="flex gap-2">
+          <GalleryMusicPlayer />
           <button
             onClick={() => setPlaying((p) => !p)}
             className="rounded-full bg-white/15 px-5 py-2 font-semibold text-white backdrop-blur transition-colors hover:bg-white/25"
