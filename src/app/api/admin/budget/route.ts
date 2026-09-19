@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { asc, eq, max } from "drizzle-orm";
 import { budgetItems, db } from "@/db";
-import { getSession } from "@/lib/auth";
+import { requireRole, type AdminRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -18,20 +18,19 @@ function cleanStatus(value: unknown) {
     : "planned";
 }
 
-async function requireAdmin() {
-  const session = await getSession();
-  return session ? null : NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+async function requireAdmin(min: AdminRole) {
+  return (await requireRole(min)).denied;
 }
 
 export async function GET() {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("viewer");
   if (unauthorized) return unauthorized;
   const items = await db.select().from(budgetItems).orderBy(asc(budgetItems.sortOrder));
   return NextResponse.json({ items });
 }
 
 export async function POST(req: NextRequest) {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("editor");
   if (unauthorized) return unauthorized;
   try {
     const body = await req.json();
@@ -61,7 +60,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("editor");
   if (unauthorized) return unauthorized;
   try {
     const body = await req.json();
@@ -93,7 +92,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("editor");
   if (unauthorized) return unauthorized;
   try {
     const body = await req.json();

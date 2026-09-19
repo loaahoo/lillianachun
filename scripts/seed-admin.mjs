@@ -29,9 +29,12 @@ if (!DATABASE_URL || !ADMIN_EMAIL || !ADMIN_PASSWORD) {
 const sql = neon(DATABASE_URL);
 const hash = await bcrypt.hash(ADMIN_PASSWORD, 12);
 
+// A newly seeded account is the site owner (the one who can invite other admins).
+// If the account already exists only its password is updated — its role is left alone.
+// Requires the role column: run `pnpm db:migrate-roles` first.
 await sql`
-  INSERT INTO admins (email, password_hash, name)
-  VALUES (${ADMIN_EMAIL.toLowerCase()}, ${hash}, 'Admin')
+  INSERT INTO admins (email, password_hash, name, role)
+  VALUES (${ADMIN_EMAIL.toLowerCase()}, ${hash}, 'Admin', 'owner')
   ON CONFLICT (email) DO UPDATE SET password_hash = ${hash}
 `;
 

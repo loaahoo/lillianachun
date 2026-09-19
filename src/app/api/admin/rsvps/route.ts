@@ -1,15 +1,13 @@
 import { NextResponse } from "next/server";
 import { desc, eq } from "drizzle-orm";
 import { db, rsvps } from "@/db";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { denied } = await requireRole("viewer");
+  if (denied) return denied;
   const rows = await db.select().from(rsvps).orderBy(desc(rsvps.createdAt));
   const totalGuests = rows
     .filter((r) => r.attending === "yes")
@@ -18,10 +16,8 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { denied } = await requireRole("editor");
+  if (denied) return denied;
   let body: {
     id?: number;
     name?: string;

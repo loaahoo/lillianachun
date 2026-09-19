@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import AccountPanel from "@/components/AccountPanel";
 import BudgetAdmin from "@/components/BudgetAdmin";
 import ContributionAdmin from "@/components/ContributionAdmin";
 import MusicAdmin from "@/components/MusicAdmin";
+import TeamAdmin from "@/components/TeamAdmin";
 
 interface AdminPhoto {
   id: number;
@@ -27,7 +29,63 @@ interface AdminRsvp {
   createdAt: string;
 }
 
-type Tab = "pending" | "approved" | "rejected" | "rsvps" | "budget" | "music" | "event";
+type Tab =
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "rsvps"
+  | "budget"
+  | "music"
+  | "event"
+  | "team"
+  | "account";
+
+/** The signed-in admin, as returned by /api/admin/me. */
+interface AdminMe {
+  adminId: number;
+  email: string;
+  name: string | null;
+  role: "owner" | "editor" | "viewer";
+  mustChangePassword: boolean;
+}
+
+const ROLE_LABEL: Record<AdminMe["role"], string> = {
+  owner: "Owner",
+  editor: "Editor",
+  viewer: "View only",
+};
+
+function AdminHeader({ me, onLogout }: { me: AdminMe | null; onLogout: () => void }) {
+  return (
+    <header className="border-b border-[color:var(--sand-deep)] bg-white/80 backdrop-blur">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-3">
+        <h1 className="font-display text-2xl text-ocean-deep">Family Admin</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          {me && (
+            <span className="text-sm text-ink/70">
+              {me.name || me.email}
+              <span className="ml-2 rounded-full bg-ocean/10 px-2.5 py-0.5 text-xs font-bold text-ocean-deep">
+                {ROLE_LABEL[me.role]}
+              </span>
+            </span>
+          )}
+          <Link
+            href="/"
+            className="rounded-full px-4 py-1.5 text-sm font-semibold text-ink hover:bg-sand-deep"
+          >
+            View site
+          </Link>
+          <button
+            onClick={onLogout}
+            className="rounded-full bg-ink/10 px-4 py-1.5 text-sm font-semibold text-ink transition-colors hover:bg-ink/20"
+          >
+            Sign out
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
 
 interface EventDetailsForm {
   date: string;
@@ -41,6 +99,7 @@ interface EventDetailsForm {
 export default function AdminPage() {
   const router = useRouter();
   const [authed, setAuthed] = useState<boolean | null>(null);
+  const [me, setMe] = useState<AdminMe | null>(null);
   const [photos, setPhotos] = useState<AdminPhoto[]>([]);
   const [rsvps, setRsvps] = useState<AdminRsvp[]>([]);
   const [totalGuests, setTotalGuests] = useState(0);
@@ -131,12 +190,15 @@ export default function AdminPage() {
       setDataLoading(true);
       setLoadError("");
       const meRes = await fetch("/api/admin/me", { credentials: "include" });
-      const me = await meRes.json().catch(() => ({ admin: null }));
-      if (!me?.admin) {
+      const meBody = await meRes.json().catch(() => ({ admin: null }));
+      if (!meBody?.admin) {
         setAuthed(false);
         return;
       }
+      setMe(meBody.admin);
       setAuthed(true);
+      // Someone on a temporary password only sees the "choose a password" screen.
+      if (meBody.admin.mustChangePassword) return;
       const [photosRes, rsvpsRes, settingsRes, eventRes] = await Promise.all([
         fetch("/api/admin/photos", { credentials: "include" }),
         fetch("/api/admin/rsvps", { credentials: "include" }),
@@ -286,6 +348,21 @@ export default function AdminPage() {
   }
   if (authed === false) return null;
 
+  if (me?.mustChangePassword) {
+    return (
+      <div className="min-h-screen bg-sand">
+        <AdminHeader me={me} onLogout={logout} />
+        <main className="mx-auto max-w-6xl px-4 py-8">
+          <AccountPanel forced onChanged={load} />
+        </main>
+      </div>
+    );
+  }
+
+  // Fail closed: anything other than a confirmed owner/editor is treated as view-only.
+  const isOwner = me?.role === "owner";
+  const canEdit = isOwner || me?.role === "editor";
+
   const counts = {
     pending: photos.filter((p) => p.status === "pending").length,
     approved: photos.filter((p) => p.status === "approved").length,
@@ -295,32 +372,32 @@ export default function AdminPage() {
     ? photos.filter((p) => p.status === tab)
     : [];
 
+  const tabs: [Tab, string][] = [
+    ["pending", `Pending (${counts.pending})`],
+    ["approved", `Approved (${counts.approved})`],
+    ["rejected", `Rejected (${counts.rejected})`],
+    ["rsvps", `RSVPs (${rsvps.length})`],
+    ["budget", "💰 Budget"],
+    ["music", "🎵 Gallery Music"],
+    ["event", "🎉 Event Details"],
+    ...(isOwner ? ([["team", "👥 Team"]] as [Tab, string][]) : []),
+    ["account", "🔑 My Account"],
+  ];
+
   return (
     <div className="min-h-screen bg-sand">
-      <header className="border-b border-[color:var(--sand-deep)] bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <h1 className="font-display text-2xl text-ocean-deep">Family Admin</h1>
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="rounded-full px-4 py-1.5 text-sm font-semibold text-ink hover:bg-sand-deep"
-            >
-              View site
-            </Link>
-            <button
-              onClick={logout}
-              className="rounded-full bg-ink/10 px-4 py-1.5 text-sm font-semibold text-ink transition-colors hover:bg-ink/20"
-            >
-              Sign out
-            </button>
-          </div>
-        </div>
-      </header>
+      <AdminHeader me={me} onLogout={logout} />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
         {loadError && (
           <p className="mb-4 rounded-2xl bg-hibiscus/10 px-4 py-3 text-sm font-semibold text-hibiscus">
             {loadError}
+          </p>
+        )}
+
+        {!canEdit && (
+          <p className="mb-4 rounded-2xl bg-ocean/10 px-4 py-3 text-sm font-semibold text-ocean-deep">
+            👀 You have view-only access. You can look at everything here, but you can&rsquo;t make changes.
           </p>
         )}
 
@@ -338,7 +415,7 @@ export default function AdminPage() {
             role="switch"
             aria-checked={requireApproval === true}
             onClick={toggleApproval}
-            disabled={requireApproval === null || toggleBusy}
+            disabled={!canEdit || requireApproval === null || toggleBusy}
             className={`relative h-8 w-14 shrink-0 rounded-full transition-colors disabled:opacity-50 ${
               requireApproval ? "bg-palm" : "bg-ink/25"
             }`}
@@ -354,17 +431,7 @@ export default function AdminPage() {
 
         {/* Tabs */}
         <div className="flex flex-wrap gap-2">
-          {(
-            [
-              ["pending", `Pending (${counts.pending})`],
-              ["approved", `Approved (${counts.approved})`],
-              ["rejected", `Rejected (${counts.rejected})`],
-              ["rsvps", `RSVPs (${rsvps.length})`],
-              ["budget", "💰 Budget"],
-              ["music", "🎵 Gallery Music"],
-              ["event", "🎉 Event Details"],
-            ] as [Tab, string][]
-          ).map(([t, label]) => (
+          {tabs.map(([t, label]) => (
             <button
               key={t}
               onClick={() => setTab(t)}
@@ -380,7 +447,7 @@ export default function AdminPage() {
         {/* Photo review */}
         {(tab === "pending" || tab === "approved" || tab === "rejected") && (
           <div className="mt-6">
-            {tab === "pending" && counts.pending > 0 && (
+            {canEdit && tab === "pending" && counts.pending > 0 && (
               <div className="mb-4 flex flex-wrap items-center gap-3">
                 <button
                   onClick={approveAll}
@@ -430,6 +497,7 @@ export default function AdminPage() {
                       <p className="mt-1 text-xs text-ink/50">
                         {new Date(p.createdAt).toLocaleString()}
                       </p>
+                      {canEdit && (
                       <div className="mt-3 flex gap-2">
                         {p.status !== "approved" && (
                           <button
@@ -459,6 +527,7 @@ export default function AdminPage() {
                           </button>
                         )}
                       </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -469,12 +538,16 @@ export default function AdminPage() {
 
         {tab === "budget" && (
           <>
-            <BudgetAdmin />
-            <ContributionAdmin />
+            <BudgetAdmin readOnly={!canEdit} />
+            <ContributionAdmin readOnly={!canEdit} />
           </>
         )}
 
-        {tab === "music" && <MusicAdmin />}
+        {tab === "music" && <MusicAdmin readOnly={!canEdit} />}
+
+        {tab === "team" && isOwner && <TeamAdmin />}
+
+        {tab === "account" && <AccountPanel />}
 
         {/* RSVP list */}
         {tab === "rsvps" && (
@@ -623,12 +696,14 @@ export default function AdminPage() {
                             {new Date(r.createdAt).toLocaleDateString()}
                           </td>
                           <td className="px-4 py-3">
-                            <button
-                              onClick={() => startEditRsvp(r)}
-                              className="rounded-full border border-ocean/40 px-4 py-1.5 text-xs font-bold text-ocean transition-colors hover:bg-ocean hover:text-white"
-                            >
-                              Edit
-                            </button>
+                            {canEdit && (
+                              <button
+                                onClick={() => startEditRsvp(r)}
+                                className="rounded-full border border-ocean/40 px-4 py-1.5 text-xs font-bold text-ocean transition-colors hover:bg-ocean hover:text-white"
+                              >
+                                Edit
+                              </button>
+                            )}
                           </td>
                         </tr>
                       ),
@@ -671,6 +746,7 @@ export default function AdminPage() {
                       <input
                         id={`event-${field}`}
                         type="text"
+                        disabled={!canEdit}
                         value={eventForm[field]}
                         onChange={(e) =>
                           setEventForm((f) => (f ? { ...f, [field]: e.target.value } : f))
@@ -680,6 +756,7 @@ export default function AdminPage() {
                       />
                     </div>
                   ))}
+                  {canEdit && (
                   <div className="mt-2 flex items-center gap-3">
                     <button
                       onClick={saveEventDetails}
@@ -695,6 +772,7 @@ export default function AdminPage() {
                       <span className="text-sm font-semibold text-hibiscus">{eventError}</span>
                     )}
                   </div>
+                  )}
                 </div>
               ) : (
                 <p className="mt-6 text-ink/60">Loading current details…</p>

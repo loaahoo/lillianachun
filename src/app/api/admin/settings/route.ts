@@ -1,21 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 import { getBoolSetting, setSetting } from "@/lib/settings";
 
 export const dynamic = "force-dynamic";
 
-/** GET: current settings (admin only). */
+/** GET: current settings (any admin). */
 export async function GET() {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { denied } = await requireRole("viewer");
+  if (denied) return denied;
   const requirePhotoApproval = await getBoolSetting("requirePhotoApproval", true);
   return NextResponse.json({ requirePhotoApproval });
 }
 
-/** PATCH: update settings (admin only). Body: { requirePhotoApproval: boolean } */
+/** PATCH: update settings (editors and up). Body: { requirePhotoApproval: boolean } */
 export async function PATCH(req: NextRequest) {
-  const session = await getSession();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { denied } = await requireRole("editor");
+  if (denied) return denied;
   try {
     const body = await req.json();
     if (typeof body.requirePhotoApproval === "boolean") {

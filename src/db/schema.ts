@@ -19,6 +19,13 @@ export const workstreamStatusEnum = pgEnum("workstream_status", [
   "in_progress",
   "done",
 ]);
+/**
+ * Admin access levels:
+ *  - owner:  everything, plus inviting/managing other admins
+ *  - editor: can change anything in the admin portal, but not manage admins
+ *  - viewer: read-only
+ */
+export const adminRoleEnum = pgEnum("admin_role", ["owner", "editor", "viewer"]);
 
 /** RSVP submissions from party guests. */
 export const rsvps = pgTable("rsvps", {
@@ -54,6 +61,9 @@ export const admins = pgTable("admins", {
   email: varchar("email", { length: 320 }).notNull().unique(),
   passwordHash: text("password_hash").notNull(),
   name: varchar("name", { length: 200 }),
+  role: adminRoleEnum("role").notNull().default("viewer"),
+  /** 1 while the person is still using a temporary password an owner set for them. */
+  mustChangePassword: integer("must_change_password").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

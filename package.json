@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "node scripts/migrate.mjs",
+    "db:migrate-roles": "node --env-file-if-exists=.env.local scripts/migrate-roles.mjs",
     "seed:admin": "node scripts/seed-admin.mjs"
   },
   "dependencies": {

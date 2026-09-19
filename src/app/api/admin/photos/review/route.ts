@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, photos } from "@/db";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
 export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { denied } = await requireRole("editor");
+  if (denied) return denied;
   try {
     const { photoId, status } = await req.json();
     if (!photoId || !["approved", "rejected", "pending"].includes(status)) {

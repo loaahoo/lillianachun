@@ -1,13 +1,11 @@
 import { del } from "@vercel/blob";
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireRole, type AdminRole } from "@/lib/auth";
 import { GALLERY_MUSIC_KEY, getGalleryMusic, type MusicTrack } from "@/lib/music";
 import { setSetting } from "@/lib/settings";
 
-async function unauthorized() {
-  return (await getSession())
-    ? null
-    : NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+async function unauthorized(min: AdminRole) {
+  return (await requireRole(min)).denied;
 }
 
 async function save(tracks: MusicTrack[]) {
@@ -15,13 +13,13 @@ async function save(tracks: MusicTrack[]) {
 }
 
 export async function GET() {
-  const denied = await unauthorized();
+  const denied = await unauthorized("viewer");
   if (denied) return denied;
   return NextResponse.json({ tracks: await getGalleryMusic() });
 }
 
 export async function POST(req: NextRequest) {
-  const denied = await unauthorized();
+  const denied = await unauthorized("editor");
   if (denied) return denied;
   try {
     const body = await req.json();
@@ -57,7 +55,7 @@ export async function POST(req: NextRequest) {
 }
 
 export async function PATCH(req: NextRequest) {
-  const denied = await unauthorized();
+  const denied = await unauthorized("editor");
   if (denied) return denied;
   try {
     const body = await req.json();
@@ -79,7 +77,7 @@ export async function PATCH(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const denied = await unauthorized();
+  const denied = await unauthorized("editor");
   if (denied) return denied;
   try {
     const { id } = await req.json();

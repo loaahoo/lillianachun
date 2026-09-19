@@ -13,7 +13,7 @@ appears in the public full-screen slideshow gallery.
 | Hosting | Vercel |
 | Database | Neon Postgres (`@neondatabase/serverless` + Drizzle ORM) |
 | Image storage | Vercel Blob (`@vercel/blob`) |
-| Auth | Email/password admin login (bcryptjs + JWT httpOnly cookie) |
+| Auth | Email/password admin login (bcryptjs + JWT httpOnly cookie) with three access levels (owner / editor / view only) |
 
 ## Pages
 
@@ -23,7 +23,7 @@ appears in the public full-screen slideshow gallery.
 | `/rsvp` | RSVP form (name, contact, attendee count, note) |
 | `/gallery` | Full-screen auto-advancing slideshow of approved photos |
 | `/admin/login` | Admin sign-in |
-| `/admin` | Review pending photos (approve/reject) and view RSVPs |
+| `/admin` | Review pending photos (approve/reject), RSVPs, budget, gallery music, event details. Owners also get a **Team** tab; everyone gets **My Account** (change password) |
 
 ## Environment variables
 
@@ -42,7 +42,8 @@ Vercel → Project → Settings → Environment Variables for production.
 ```bash
 pnpm install          # install dependencies
 pnpm db:migrate       # create tables in Neon (reads DATABASE_URL)
-pnpm seed:admin       # create/update the admin account
+pnpm db:migrate-roles # add admin access levels (see "Admin access levels")
+pnpm seed:admin       # create/update the owner account
 pnpm dev              # run locally at http://localhost:3000
 ```
 
@@ -53,8 +54,35 @@ pnpm dev              # run locally at http://localhost:3000
    store — this injects `BLOB_READ_WRITE_TOKEN` automatically.
 3. Add `DATABASE_URL` (Neon) and `JWT_SECRET` under Settings → Environment
    Variables.
-4. Deploy. Run `pnpm db:migrate` and `pnpm seed:admin` once from your machine
-   (with the production env vars) if you haven't already.
+4. Deploy. Run `pnpm db:migrate`, `pnpm db:migrate-roles` and `pnpm seed:admin`
+   once from your machine (with the production env vars) if you haven't already.
+
+> **Upgrading an existing site to access levels:** run `pnpm db:migrate-roles`
+> against the production database **before** deploying this version. It's safe
+> to run early (the old code ignores the new columns) and safe to re-run.
+
+## Admin access levels
+
+| Level | Can do |
+| --- | --- |
+| **Owner** | Everything, plus invite/remove other admins and reset their passwords (the **Team** tab) |
+| **Editor** | Change anything: approve/reject photos, edit RSVPs, budget, contributions, gallery music, event details. Cannot manage other admins |
+| **View only** | Look at everything (photos, RSVPs, budget, music, event details). Cannot change anything |
+
+- Owners invite people from **Admin → Team** as *Editor* or *View only*, and give
+  them a temporary password (there's a Generate button) to pass along. The new
+  person is asked to choose their own password the first time they sign in.
+- An owner can change someone between Editor and View only, reset their
+  password, or remove them at any time; it takes effect on their next request
+  (their role is always read from the database, not from the login cookie).
+- **Owner accounts are never created, changed, or removed from the website**, so
+  the owner can't be locked out from the UI. `pnpm db:migrate-roles` makes
+  `OWNER_EMAIL` (default `leightonchun@gmail.com`) the owner and gives every
+  other existing admin *Editor* so nobody loses access; `pnpm seed:admin` creates
+  a new account as owner. To change the owner directly:
+  `UPDATE admins SET role = 'owner' WHERE email = '...';`
+- Every admin API route enforces its level on the server (see `requireRole` in
+  `src/lib/auth.ts`); hiding buttons in the UI is only a convenience.
 
 ## How photo approval works
 

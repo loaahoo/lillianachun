@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { db, photos } from "@/db";
-import { getSession } from "@/lib/auth";
+import { requireRole } from "@/lib/auth";
 
-/** POST: approve every photo currently in pending status (admin only). */
+/** POST: approve every photo currently in pending status (editors and up). */
 export async function POST() {
-  const session = await getSession();
-  if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const { denied } = await requireRole("editor");
+  if (denied) return denied;
   try {
     const updated = await db
       .update(photos)

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
+import { requireRole, type AdminRole } from "@/lib/auth";
 import { setSetting } from "@/lib/settings";
 import {
   CONTRIBUTIONS_KEY,
@@ -7,20 +7,18 @@ import {
   type Contribution,
 } from "@/lib/contributions";
 
-async function requireAdmin() {
-  return (await getSession())
-    ? null
-    : NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+async function requireAdmin(min: AdminRole) {
+  return (await requireRole(min)).denied;
 }
 
 export async function GET() {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("viewer");
   if (unauthorized) return unauthorized;
   return NextResponse.json({ contributions: await getContributions() });
 }
 
 export async function PATCH(req: NextRequest) {
-  const unauthorized = await requireAdmin();
+  const unauthorized = await requireAdmin("editor");
   if (unauthorized) return unauthorized;
   try {
     const body = await req.json();

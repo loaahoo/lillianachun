@@ -19,7 +19,7 @@ function safeFilename(filename: string) {
   return filename.replace(/[^a-zA-Z0-9._-]/g, "_");
 }
 
-export default function MusicAdmin() {
+export default function MusicAdmin({ readOnly = false }: { readOnly?: boolean }) {
   const [tracks, setTracks] = useState<MusicTrack[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -144,9 +144,12 @@ export default function MusicAdmin() {
     <section className="mt-6 rounded-2xl bg-white p-5 shadow-sm sm:p-7">
       <h2 className="font-display text-2xl text-ocean-deep">Gallery music</h2>
       <p className="mt-1 text-sm text-ink/60">
-        Upload MP3s in the order you want them played. After the last song, the playlist starts over.
+        {readOnly
+          ? "These songs play in this order in the gallery. After the last song, the playlist starts over."
+          : "Upload MP3s in the order you want them played. After the last song, the playlist starts over."}
       </p>
 
+      {!readOnly && (
       <div className="mt-5 rounded-2xl border-2 border-dashed border-ocean/35 bg-sand/50 p-5 text-center">
         <input
           ref={inputRef}
@@ -168,6 +171,7 @@ export default function MusicAdmin() {
         </button>
         <p className="mt-2 text-xs text-ink/50">MP3 only · up to 30 MB per song</p>
       </div>
+      )}
 
       {loading ? (
         <p className="mt-5 text-sm text-ink/60">Loading playlist…</p>
@@ -183,31 +187,35 @@ export default function MusicAdmin() {
                 {index + 1}
               </span>
               <span className="min-w-0 flex-1 truncate font-semibold text-ink">{track.title}</span>
-              <button
-                type="button"
-                onClick={() => void move(index, -1)}
-                disabled={index === 0}
-                aria-label={`Move ${track.title} up`}
-                className="rounded-full px-3 py-1.5 font-bold text-ocean disabled:opacity-25"
-              >
-                ↑
-              </button>
-              <button
-                type="button"
-                onClick={() => void move(index, 1)}
-                disabled={index === tracks.length - 1}
-                aria-label={`Move ${track.title} down`}
-                className="rounded-full px-3 py-1.5 font-bold text-ocean disabled:opacity-25"
-              >
-                ↓
-              </button>
-              <button
-                type="button"
-                onClick={() => void remove(track)}
-                className="rounded-full px-3 py-1.5 text-sm font-bold text-hibiscus hover:bg-hibiscus/10"
-              >
-                Remove
-              </button>
+              {!readOnly && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => void move(index, -1)}
+                    disabled={index === 0}
+                    aria-label={`Move ${track.title} up`}
+                    className="rounded-full px-3 py-1.5 font-bold text-ocean disabled:opacity-25"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void move(index, 1)}
+                    disabled={index === tracks.length - 1}
+                    aria-label={`Move ${track.title} down`}
+                    className="rounded-full px-3 py-1.5 font-bold text-ocean disabled:opacity-25"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void remove(track)}
+                    className="rounded-full px-3 py-1.5 text-sm font-bold text-hibiscus hover:bg-hibiscus/10"
+                  >
+                    Remove
+                  </button>
+                </>
+              )}
             </li>
           ))}
         </ol>

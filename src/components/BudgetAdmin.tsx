@@ -54,7 +54,7 @@ function normalizedMoney(draft: BudgetDraft) {
   };
 }
 
-export default function BudgetAdmin() {
+export default function BudgetAdmin({ readOnly = false }: { readOnly?: boolean }) {
   const [items, setItems] = useState<BudgetItem[]>([]);
   const [drafts, setDrafts] = useState<Record<number, BudgetDraft>>({});
   const [newItem, setNewItem] = useState<BudgetDraft>(EMPTY_DRAFT);
@@ -188,6 +188,7 @@ export default function BudgetAdmin() {
         </div>
       </div>
 
+      {!readOnly && (
       <div className="rounded-2xl bg-white p-5 shadow-sm">
         <h2 className="font-display text-2xl text-ocean-deep">Add an expense</h2>
         <p className="mt-1 text-sm text-ink/60">Add any new cost that should appear on the family Planning page.</p>
@@ -213,6 +214,7 @@ export default function BudgetAdmin() {
           {busyId === "new" ? "Adding…" : "+ Add expense"}
         </button>
       </div>
+      )}
 
       <div className="space-y-4">
         {items.map(item => {
@@ -220,6 +222,7 @@ export default function BudgetAdmin() {
           if (!draft) return null;
           return (
             <div key={item.id} className="rounded-2xl bg-white p-5 shadow-sm">
+              <fieldset disabled={readOnly} className="min-w-0">
               <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
                 <label className="text-xs font-bold text-ink/60">Expense
                   <input value={draft.item} onChange={e => updateDraft(item.id, { item: e.target.value })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
@@ -248,6 +251,8 @@ export default function BudgetAdmin() {
                   <input value={draft.notes ?? ""} onChange={e => updateDraft(item.id, { notes: e.target.value })} className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink" />
                 </label>
               </div>
+              </fieldset>
+              {!readOnly && (
               <div className="mt-4 flex flex-wrap gap-2">
                 <button onClick={() => save(item.id)} disabled={busyId === item.id} className="rounded-full bg-palm px-5 py-2 text-sm font-bold text-white hover:bg-palm/90 disabled:opacity-50">
                   {busyId === item.id ? "Saving…" : "Save"}
@@ -256,6 +261,7 @@ export default function BudgetAdmin() {
                   Remove
                 </button>
               </div>
+              )}
             </div>
           );
         })}
