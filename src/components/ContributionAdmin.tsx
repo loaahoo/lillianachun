@@ -22,7 +22,8 @@ export default function ContributionAdmin({ readOnly = false }: { readOnly?: boo
       .finally(() => setLoading(false));
   }, []);
 
-  const total = useMemo(() => items.reduce((sum, item) => sum + item.amountCents, 0), [items]);
+  const totalCommitted = useMemo(() => items.reduce((sum, item) => sum + item.amountCents, 0), [items]);
+  const totalPaid = useMemo(() => items.reduce((sum, item) => sum + (item.paidCents || 0), 0), [items]);
 
   const save = async () => {
     setSaving(true);
@@ -48,17 +49,17 @@ export default function ContributionAdmin({ readOnly = false }: { readOnly?: boo
   return (
     <section className="mt-8 rounded-2xl bg-white p-5 shadow-sm">
       <h2 className="font-display text-2xl text-ocean-deep">Family contributions</h2>
-      <p className="mt-1 text-sm text-ink/60">Edit the amounts pledged on the public Planning page.</p>
+      <p className="mt-1 text-sm text-ink/60">Edit the amounts committed and the partial donations paid so far. This is what shows on the public Planning page.</p>
       <fieldset disabled={readOnly} className="mt-4 min-w-0 space-y-3">
         {items.map((item, index) => (
-          <div key={index} className="grid gap-3 sm:grid-cols-[1fr_12rem_auto_auto]">
+          <div key={index} className="grid gap-3 sm:grid-cols-[1fr_10rem_10rem_auto]">
             <input
               aria-label="Contributor name"
               value={item.name}
               onChange={e => setItems(current => current.map((value, i) => i === index ? { ...value, name: e.target.value } : value))}
               className="rounded-xl border border-sand-deep px-3 py-2"
             />
-            <label className="text-xs font-bold text-ink/60">Pledged $
+            <label className="text-xs font-bold text-ink/60">Committed $
               <input
                 type="number"
                 min="0"
@@ -68,14 +69,15 @@ export default function ContributionAdmin({ readOnly = false }: { readOnly?: boo
                 className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink"
               />
             </label>
-            <label className="flex items-center gap-2 self-end rounded-xl border border-sand-deep px-3 py-2 text-sm font-semibold text-ink/70">
+            <label className="text-xs font-bold text-ink/60">Paid so far $
               <input
-                type="checkbox"
-                checked={item.received}
-                onChange={e => setItems(current => current.map((value, i) => i === index ? { ...value, received: e.target.checked } : value))}
-                className="h-4 w-4 accent-palm"
+                type="number"
+                min="0"
+                step="0.01"
+                value={item.paidCents / 100 || ""}
+                onChange={e => setItems(current => current.map((value, i) => i === index ? { ...value, paidCents: dollarsToCents(e.target.value) } : value))}
+                className="mt-1 w-full rounded-xl border border-sand-deep px-3 py-2 text-sm text-ink"
               />
-              Money received
             </label>
             {!readOnly && (
               <button
@@ -92,7 +94,7 @@ export default function ContributionAdmin({ readOnly = false }: { readOnly?: boo
       <div className="mt-5 flex flex-wrap items-center gap-3">
         {!readOnly && (
           <>
-            <button type="button" onClick={() => setItems(current => [...current, { name: "", amountCents: 0, received: false }])} className="rounded-full bg-ocean px-5 py-2 text-sm font-bold text-white">
+            <button type="button" onClick={() => setItems(current => [...current, { name: "", amountCents: 0, paidCents: 0 }])} className="rounded-full bg-ocean px-5 py-2 text-sm font-bold text-white">
               + Add person
             </button>
             <button type="button" onClick={save} disabled={saving} className="rounded-full bg-palm px-5 py-2 text-sm font-bold text-white disabled:opacity-50">
@@ -100,7 +102,7 @@ export default function ContributionAdmin({ readOnly = false }: { readOnly?: boo
             </button>
           </>
         )}
-        <span className="font-semibold text-ink/65">Total pledged: ${(total / 100).toLocaleString()}</span>
+        <span className="font-semibold text-ink/65">Committed: ${(totalCommitted / 100).toLocaleString()} · Paid: ${(totalPaid / 100).toLocaleString()}</span>
       </div>
       {message && <p className={`mt-3 text-sm font-semibold ${message.startsWith("✓") ? "text-palm" : "text-hibiscus"}`}>{message}</p>}
     </section>
