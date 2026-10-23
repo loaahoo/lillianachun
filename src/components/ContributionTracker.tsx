@@ -15,7 +15,7 @@ function paidStatus(item: Contribution): { label: string; full: boolean; partial
     return { label: "✓ Paid in full", full: true, partial: false };
   }
   if (paid > 0) {
-    return { label: `${currency.format(paid)} paid of ${currency.format(item.amountCents / 100)}`, full: false, partial: true };
+    return { label: `${currency.format(paid / 100)} paid of ${currency.format(item.amountCents / 100)}`, full: false, partial: true };
   }
   return { label: "Committed", full: false, partial: false };
 }
