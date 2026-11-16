@@ -125,9 +125,13 @@ export default function AdminPage() {
   } | null>(null);
   const [rsvpSaving, setRsvpSaving] = useState(false);
   const [rsvpError, setRsvpError] = useState("");
+  const [confirmDeleteRsvpId, setConfirmDeleteRsvpId] = useState<number | null>(null);
+  const [rsvpDeleting, setRsvpDeleting] = useState(false);
+  const [rsvpDeleteError, setRsvpDeleteError] = useState("");
 
   const startEditRsvp = (r: AdminRsvp) => {
     setEditingRsvpId(r.id);
+    setConfirmDeleteRsvpId(null);
     setRsvpError("");
     setRsvpForm({
       name: r.name,
@@ -182,6 +186,32 @@ export default function AdminPage() {
       setRsvpError("Network error — please try again.");
     } finally {
       setRsvpSaving(false);
+    }
+  };
+
+  const deleteRsvp = async (id: number) => {
+    if (rsvpDeleting) return;
+    setRsvpDeleting(true);
+    setRsvpDeleteError("");
+    setConfirmDeleteRsvpId(null);
+    const prev = rsvps;
+    const recalcTotal = (list: AdminRsvp[]) =>
+      list.filter((r) => r.attending === "yes").reduce((s, r) => s + r.attendees, 0);
+    const next = prev.filter((r) => r.id !== id);
+    setRsvps(next);
+    setTotalGuests(recalcTotal(next));
+    try {
+      const res = await fetch(`/api/admin/rsvps?id=${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      setRsvps(prev);
+      setTotalGuests(recalcTotal(prev));
+      setRsvpDeleteError("Could not delete that RSVP — please try again.");
+    } finally {
+      setRsvpDeleting(false);
     }
   };
 
@@ -570,6 +600,11 @@ export default function AdminPage() {
                 <p className="text-sm text-ink/60">Regrets</p>
               </div>
             </div>
+            {rsvpDeleteError && (
+              <p className="mb-4 rounded-2xl bg-hibiscus/10 px-4 py-3 text-sm font-semibold text-hibiscus">
+                {rsvpDeleteError}
+              </p>
+            )}
             {rsvps.length === 0 ? (
               <p className="rounded-2xl bg-white/70 p-10 text-center text-ink/60">
                 No RSVPs yet.
@@ -697,12 +732,59 @@ export default function AdminPage() {
                           </td>
                           <td className="px-4 py-3">
                             {canEdit && (
-                              <button
-                                onClick={() => startEditRsvp(r)}
-                                className="rounded-full border border-ocean/40 px-4 py-1.5 text-xs font-bold text-ocean transition-colors hover:bg-ocean hover:text-white"
-                              >
-                                Edit
-                              </button>
+                              <div className="flex items-center gap-2">
+                                {confirmDeleteRsvpId === r.id ? (
+                                  <>
+                                    <button
+                                      onClick={() => deleteRsvp(r.id)}
+                                      disabled={rsvpDeleting}
+                                      className="rounded-full bg-hibiscus px-4 py-1.5 text-xs font-bold text-white transition-colors hover:bg-hibiscus/90 disabled:opacity-60"
+                                    >
+                                      {rsvpDeleting ? "Deleting…" : "Confirm delete"}
+                                    </button>
+                                    <button
+                                      onClick={() => setConfirmDeleteRsvpId(null)}
+                                      disabled={rsvpDeleting}
+                                      className="rounded-full border border-ink/20 px-4 py-1.5 text-xs font-bold text-ink/70 transition-colors hover:bg-ink/5 disabled:opacity-60"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <button
+                                      onClick={() => startEditRsvp(r)}
+                                      className="rounded-full border border-ocean/40 px-4 py-1.5 text-xs font-bold text-ocean transition-colors hover:bg-ocean hover:text-white"
+                                    >
+                                      Edit
+                                    </button>
+                                    <button
+                                      onClick={() => setConfirmDeleteRsvpId(r.id)}
+                                      title={`Delete RSVP from ${r.name}`}
+                                      aria-label={`Delete RSVP from ${r.name}`}
+                                      className="rounded-full p-2 text-hibiscus transition-colors hover:bg-hibiscus/10"
+                                    >
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="h-4 w-4"
+                                        aria-hidden="true"
+                                      >
+                                        <path d="M3 6h18" />
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+                                        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                                        <line x1="10" x2="10" y1="11" y2="17" />
+                                        <line x1="14" x2="14" y1="11" y2="17" />
+                                      </svg>
+                                    </button>
+                                  </>
+                                )}
+                              </div>
                             )}
                           </td>
                         </tr>

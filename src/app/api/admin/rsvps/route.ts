@@ -75,3 +75,28 @@ export async function PATCH(req: Request) {
   }
   return NextResponse.json({ rsvp: updated });
 }
+
+export async function DELETE(req: Request) {
+  const { denied } = await requireRole("editor");
+  if (denied) return denied;
+  let id = Number(new URL(req.url).searchParams.get("id"));
+  if (!Number.isInteger(id) || id < 1) {
+    try {
+      const body = await req.json();
+      id = Number(body.id);
+    } catch {
+      // No usable id in the query string or body; fall through to the 400 below.
+    }
+  }
+  if (!Number.isInteger(id) || id < 1) {
+    return NextResponse.json({ error: "Valid RSVP id required" }, { status: 400 });
+  }
+  const [deleted] = await db
+    .delete(rsvps)
+    .where(eq(rsvps.id, id))
+    .returning({ id: rsvps.id });
+  if (!deleted) {
+    return NextResponse.json({ error: "RSVP not found" }, { status: 404 });
+  }
+  return NextResponse.json({ deleted: deleted.id });
+}
