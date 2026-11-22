@@ -40,6 +40,8 @@ type Tab =
   | "team"
   | "account";
 
+type RsvpSortKey = "name" | "contact" | "attending" | "attendees" | "message" | "createdAt";
+
 /** The signed-in admin, as returned by /api/admin/me. */
 interface AdminMe {
   adminId: number;
@@ -87,6 +89,39 @@ function AdminHeader({ me, onLogout }: { me: AdminMe | null; onLogout: () => voi
   );
 }
 
+function RsvpSortHeader({
+  label,
+  sortKey,
+  sort,
+  onToggle,
+}: {
+  label: string;
+  sortKey: RsvpSortKey;
+  sort: { key: RsvpSortKey; dir: "asc" | "desc" };
+  onToggle: (key: RsvpSortKey) => void;
+}) {
+  const active = sort.key === sortKey;
+  return (
+    <th
+      className="px-4 py-3"
+      aria-sort={active ? (sort.dir === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <button
+        type="button"
+        onClick={() => onToggle(sortKey)}
+        className={`inline-flex items-center gap-1 font-bold uppercase tracking-wide transition-colors hover:text-ocean-deep ${
+          active ? "text-ocean-deep" : ""
+        }`}
+      >
+        {label}
+        <span aria-hidden="true" className="text-[10px]">
+          {active ? (sort.dir === "asc" ? "▲" : "▼") : "↕"}
+        </span>
+      </button>
+    </th>
+  );
+}
+
 interface EventDetailsForm {
   date: string;
   time: string;
@@ -128,6 +163,21 @@ export default function AdminPage() {
   const [confirmDeleteRsvpId, setConfirmDeleteRsvpId] = useState<number | null>(null);
   const [rsvpDeleting, setRsvpDeleting] = useState(false);
   const [rsvpDeleteError, setRsvpDeleteError] = useState("");
+  // Newest first, matching the order the API returns.
+  const [rsvpSort, setRsvpSort] = useState<{ key: RsvpSortKey; dir: "asc" | "desc" }>({
+    key: "createdAt",
+    dir: "desc",
+  });
+
+  const toggleRsvpSort = (key: RsvpSortKey) => {
+    setRsvpSort((prev) => {
+      if (prev.key === key) {
+        return { key, dir: prev.dir === "asc" ? "desc" : "asc" };
+      }
+      // First click on a column: A-Z / smallest first, except Received (newest first).
+      return { key, dir: key === "createdAt" ? "desc" : "asc" };
+    });
+  };
 
   const startEditRsvp = (r: AdminRsvp) => {
     setEditingRsvpId(r.id);
@@ -402,6 +452,32 @@ export default function AdminPage() {
     ? photos.filter((p) => p.status === tab)
     : [];
 
+  const sortedRsvps = [...rsvps].sort((a, b) => {
+    const dir = rsvpSort.dir === "asc" ? 1 : -1;
+    switch (rsvpSort.key) {
+      case "name":
+        return dir * a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+      case "contact":
+        return (
+          dir *
+          (a.email ?? a.phone ?? "").localeCompare(b.email ?? b.phone ?? "", undefined, {
+            sensitivity: "base",
+          })
+        );
+      case "attending":
+        return dir * a.attending.localeCompare(b.attending);
+      case "attendees":
+        return dir * (a.attendees - b.attendees);
+      case "message":
+        return (
+          dir *
+          (a.message ?? "").localeCompare(b.message ?? "", undefined, { sensitivity: "base" })
+        );
+      case "createdAt":
+        return dir * (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    }
+  });
+
   const tabs: [Tab, string][] = [
     ["pending", `Pending (${counts.pending})`],
     ["approved", `Approved (${counts.approved})`],
@@ -614,17 +690,17 @@ export default function AdminPage() {
                 <table className="w-full min-w-[42rem] text-left text-sm">
                   <thead className="border-b border-[color:var(--sand-deep)] text-xs uppercase text-ink/60">
                     <tr>
-                      <th className="px-4 py-3">Name</th>
-                      <th className="px-4 py-3">Contact</th>
-                      <th className="px-4 py-3">Attending</th>
-                      <th className="px-4 py-3">Guests</th>
-                      <th className="px-4 py-3">Note</th>
-                      <th className="px-4 py-3">Received</th>
+                      <RsvpSortHeader label="Name" sortKey="name" sort={rsvpSort} onToggle={toggleRsvpSort} />
+                      <RsvpSortHeader label="Contact" sortKey="contact" sort={rsvpSort} onToggle={toggleRsvpSort} />
+                      <RsvpSortHeader label="Attending" sortKey="attending" sort={rsvpSort} onToggle={toggleRsvpSort} />
+                      <RsvpSortHeader label="Guests" sortKey="attendees" sort={rsvpSort} onToggle={toggleRsvpSort} />
+                      <RsvpSortHeader label="Note" sortKey="message" sort={rsvpSort} onToggle={toggleRsvpSort} />
+                      <RsvpSortHeader label="Received" sortKey="createdAt" sort={rsvpSort} onToggle={toggleRsvpSort} />
                       <th className="px-4 py-3"></th>
                     </tr>
                   </thead>
                   <tbody>
-                    {rsvps.map((r) =>
+                    {sortedRsvps.map((r) =>
                       editingRsvpId === r.id && rsvpForm ? (
                         <tr key={r.id} className="border-b border-[color:var(--sand-deep)]/60 bg-sand/40 last:border-0">
                           <td className="px-4 py-3">
